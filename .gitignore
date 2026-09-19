@@ -1,0 +1,26 @@
+# Godot 4: importierte Ressourcen und Editor-Zustand
+.godot/
+
+# Godot-Exportausgaben
+build/
+dist/
+exports/
+
+# Android-Buildausgaben
+android/build/
+
+# Lokale Editor- und IDE-Dateien
+.vscode/
+.idea/
+*.code-workspace
+
+# Betriebssystemdateien
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Temporäre Dateien und Protokolle
+*.tmp
+*.temp
+*.log
+*~
