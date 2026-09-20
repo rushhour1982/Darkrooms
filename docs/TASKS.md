@@ -101,7 +101,7 @@ Nach P1-01 direkt eine kurze freiwillige Junior-Probe ermöglichen; nicht auf Sp
 | --- | --- | --- |
 | E01 | Tatsächliche Godot-Version **4.7.2 Stable**, GDScript-Ausgabe, passende Windows-x86-64-Templates, CPU/GPU/VRAM/RAM/Windows | P0-01 erfasst und prüft. Bis zum Nachweis keine abhängige Projektanlage. Abweichende Installation nicht still ersetzen. **Beleg 20.09.2026: ERFÜLLT** (P0-01, Project Lead); Details bei P0-01 „Befund / Abnahme“. |
 | E02a | Ein ausdrücklich gewähltes vorläufiges Renderer-Testprofil einschließlich Gerät und Testauflösung | P0-01 bereitet Auswahl vor; Project Lead bewertet den technischen Vorschlag. Keine Variante wird in dieser Planung bevorzugt. Vor P0-02 dokumentieren. **Beleg 20.09.2026: vorläufig gewählt** – Mobile + Vulkan, 1920×1080, erfasster Samsung-Laptop; Compatibility Rückfall, Forward+ späterer Vergleich (E02b); keine Endentscheidung für V0.1. |
-| E03, zunächst Bedienung | Testbelegung für Pause und Regel bei Fokusverlust/-rückkehr | Vor P0-03 den benötigten Teil mit Project Lead/Autoren vorläufig bestätigen; keine neue Gate-ID. |
+| E03, zunächst Bedienung | Testbelegung für Pause und Regel bei Fokusverlust/-rückkehr | Vor P0-03 den benötigten Teil mit Project Lead/Autoren vorläufig bestätigen; keine neue Gate-ID. **Beleg 20.09.2026 (E03a, Project Lead, vorläufig für 0.1):** Escape toggelt Pause im aktiven Gameplay und setzt aus der Pause fort; im Menü/außerhalb des Gameplays löst Escape keine Fortsetzung aus. Fokusverlust im Gameplay pausiert automatisch; Fokusrückkehr setzt nicht automatisch fort, Fortsetzen nur bewusst durch den Spieler. Maus im aktiven First-Person-Gameplay später gefangen, im Menü und in der Pause sichtbar und frei; P0-03 bereitet diese Lebenszyklus-/Mauslogik vor und prüft sie in der Sandbox. Eingabe über Godot Input Actions, keine fest verdrahteten Tastencodes, kein Input-Manager/Event-Bus. Details bei P0-03 „E03a-Beleg“. |
 | E03, Bewegung | Kamera/FOV/Empfindlichkeit/Blickgrenzen, Körpermaße, Geschwindigkeiten, Beschleunigen/Bremsen, Gravity, Sprung-/Luft-/Steigungsgrenzen und Bedienung | Vor P1-01 das benötigte vorläufige Profil freigeben. Sprint-/Duckkombinationen und Traversalauslösung/-grenzen spätestens vor P1-02/03 ergänzen. Bis J1/R1 reproduzierbare Befunde; keine finalen Raum-/Fluchtmaße. |
 | E12a | Kleine bekannte Testtonquelle, erlaubte Lautstärke, Hörgerät und benötigtes Testimportprofil | Vor P1-04 bestätigen; kein Blocker für den stillen frühen P1-01-Test. Keine finale Soundbibliothek. |
 | E02b, E18, E21 | Regulärer Renderer, Ressourcenbudgets, unterstütztes Windows-/Paketprofil | Offen lassen: P0 bereitet Vergleich/Messung vor; E02b spätestens vor P3 beziehungsweise regulärer Grafikarbeit, E18 vor größerem Ausbau P7, E21 vor P12. |
@@ -188,7 +188,13 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Titel:** Eingabeaktionen und sicheren Menü-/Pausenwechsel vorbereiten.
 - **Phase:** P0 – Projektbasis und technische Verifikation.
 - **Milestone:** M0 – Projekt läuft; Zulauf R0.
-- **Status:** GATE_OPEN – 20.09.2026; P0-02 ist ACCEPTED, es fehlt noch die vorläufige Bestätigung des E03-Teils „Bedienung“ (Testbelegung Pause, Regel bei Fokusverlust/-rückkehr) durch Project Lead/Autoren. Nach diesem Beleg READY.
+- **Status:** READY – 20.09.2026; P0-02 ACCEPTED und E03a „Bedienung“ vorläufig bestätigt (siehe „E03a-Beleg“ unten). Kein automatischer Arbeitsbeginn; konkreter Auftrag steht aus.
+- **E03a-Beleg (Project Lead, 20.09.2026, vorläufig verbindlich für Version 0.1):**
+  - **Pause:** Escape toggelt die Pause während aktivem Gameplay; Escape im Pausezustand setzt fort. In Hauptmenü-/Nicht-Gameplay-Phasen löst Escape keine ungewollte Gameplay-Fortsetzung aus.
+  - **Fokusverlust:** Verliert das laufende Gameplay den Fensterfokus, wird automatisch pausiert. Bei Rückkehr des Fokus wird nicht automatisch fortgesetzt; der Spieler muss Fortsetzen bewusst auslösen.
+  - **Maus:** Während aktivem First-Person-Gameplay wird die Maus später gefangen; im Hauptmenü und während der Pause ist der Zeiger sichtbar und frei. P0-03 bereitet diese Lebenszyklus-/Mauslogik bereits vor und prüft sie in der Sandbox, obwohl der Player erst in P1 entsteht.
+  - **Input:** Godot Input Actions; keine fest verdrahteten Tastencodes als Architekturprinzip; keine unnötige Input-Manager-/Event-Bus-Architektur.
+  - Grenzen: vorläufige Testbelegung, keine Rebinding-Funktion und keine Regel für Inventar/Lesen (E06 bleibt offen).
 - **Verantwortliche Rolle:** Claude Code / Opus 5.0.
 - **Priorität:** Hoch.
 - **Ziel:** Eine verlässliche Eingabe- und Pausenbasis für den anschließenden Player bereitstellen.
