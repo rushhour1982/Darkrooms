@@ -36,6 +36,8 @@ var _phase: Phase = Phase.MENU
 ## Wird genau einmal pro Weltwechsel erhöht; entwertet verspätete Fortsetzungen.
 var _run_generation: int = 0
 var _world: Node3D = null
+## Fokusverlust während PREPARING muss bis zur Aktivierung erhalten bleiben.
+var _pause_on_activation: bool = false
 
 
 func _ready() -> void:
@@ -172,6 +174,8 @@ func _on_quit_requested() -> void:
 func _on_window_focus_exited() -> void:
 	if _phase == Phase.PLAYING:
 		pause_game()
+	elif _phase == Phase.PREPARING:
+		_pause_on_activation = true
 
 
 ## Phase und Enginepause an genau einer Stelle setzen: pausiert nur in PAUSED.
@@ -185,8 +189,18 @@ func _set_phase(phase: Phase) -> void:
 ## Gemeinsamer Eintritt in PLAYING für Weltstart und Fortsetzen: Aktionspuffer
 ## verwerfen, Gameplay freigeben, Weltansicht mit gefangener Maus zeigen.
 func _activate_gameplay() -> void:
-	_set_phase(Phase.PLAYING)
+	# flush_buffered_events stellt Ereignisse zu, statt sie zu löschen. Während
+	# dieser synchronen Zustellung dürfen weder Pause noch alte UI-Buttons einen
+	# weiteren Übergang auslösen; die Welt bleibt bis danach inaktiv.
+	_set_phase(Phase.PREPARING)
+	_game_ui.show_preparing("Welt wird vorbereitet …")
 	_discard_action_buffer()
+	if _pause_on_activation:
+		_pause_on_activation = false
+		_set_phase(Phase.PAUSED)
+		_game_ui.show_pause()
+		return
+	_set_phase(Phase.PLAYING)
 	_world.set_gameplay_active(true)
 	_game_ui.show_world_view()
 
@@ -202,6 +216,7 @@ func _discard_action_buffer() -> void:
 
 func _begin_transition() -> int:
 	_run_generation += 1
+	_pause_on_activation = false
 	_set_phase(Phase.PREPARING)
 	return _run_generation
 

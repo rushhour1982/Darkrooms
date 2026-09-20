@@ -270,7 +270,7 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Titel:** Kleiner gebündelter Senior-Review R0 – Projektbasis.
 - **Phase:** P0 – Projektbasis und technische Verifikation.
 - **Milestone:** M0 – Projekt läuft; Abschlussgate R0.
-- **Status:** READY – 20.09.2026; P0-01 bis P0-04 ACCEPTED mit Self-Reviews und praktischen Editor-/Exportbefunden, E01/E02a belegt. Übergabestand: Basis `41ad13a` plus abgegrenzter P0-04-Diff (`game/export_presets.cfg`, `game/app/main.gd`); ein freigegebener Bootstrap-Integrationscommit vor R0 fixiert ihn als Commit-ID. Kein automatischer Arbeitsbeginn; keine konkurrierende Umsetzung während des Reviews.
+- **Status:** ACCEPTED – 20.09.2026; R0 durch Codex / Astra High durchgeführt, vom Project Lead geprüft und akzeptiert; **M0 – Projekt läuft: ACCEPTED**. Befund siehe „Befund / Abnahme (R0)“ unten.
 - **Verantwortliche Rolle:** Codex / Astra High prüft; Project Lead entscheidet über M0-Abnahme. Normale Korrekturen werden Claude eindeutig zugewiesen.
 - **Priorität:** Hoch; vor P1-Freigabe.
 - **Ziel:** Den getesteten Bootstrap auf tragfähige minimale Zuständigkeiten und belegten Start/Export prüfen.
@@ -292,6 +292,16 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Astra-Review:** Ja – **R0 selbst**, einmal gebündelt für P0-01 bis P0-04 am Ende P0.
 - **Junior-Test:** Nein als Pflicht; M0 benötigt noch keine spielerische Abnahme.
 - **Blocker / offene Entscheidung:** Fehlender Runtime-/Exportnachweis oder blockierender R0-Befund hält M0 offen; E03-Bewegungsprofil wird erst für P1 benötigt.
+- **Befund / Abnahme (R0, D1, 20.09.2026):**
+  - **Geprüfter Stand:** P0-01 bis P0-04 (ACCEPTED) auf Basis der Commits bis `5f6e3d7` „Add Windows export configuration“; Reviewer Codex / Astra High; Entscheidung Project Lead.
+  - **Urteil:** keine BLOCKER. Keine Architekturänderung notwendig: Main bleibt Lifecycle-Besitzer, UI bleibt Darstellung, keine Autoloads, kein globaler Event Bus, keine zusätzlichen Manager, keine vorgezogenen P1-Systeme.
+  - **IMPORTANT 1 – geschütztes Resume nach Pause / keine unerwünschte Ereigniszustellung:** `Input.flush_buffered_events()` stellt gepufferte Ereignisse zu, statt sie zu löschen; während dieser synchronen Zustellung durften weder die Pause-Action noch alte UI-Buttons einen weiteren Übergang auslösen. Behoben durch Astra: `_activate_gameplay()` durchläuft vor der Freigabe kurz PREPARING (Übergangsansicht), verwirft dann den Aktionspuffer und gibt die Welt erst danach frei (`game/app/main.gd`).
+  - **IMPORTANT 2 – Fokusverlust während PREPARING/Weltwechsel:** Ein Fokusverlust während des Weltaufbaus ging verloren und die Welt startete unpausiert. Behoben durch Astra: `_pause_on_activation` wird bei Fokusverlust in PREPARING gesetzt, bei jedem Übergangsbeginn zurückgesetzt und beim Aktivieren als PAUSED mit Pausepanel angewendet (`game/app/main.gd`).
+  - **Bestandene Reviewtests:** Lifecycle 122/122; Input/Pause 130/130; neue Regressionstests `game/tests/p0_lifecycle_regression.gd` 55/55 headless, 63/63 Windows/Vulkan, 55/55 aus dem Debug-Paket; Parser/Import fehlerfrei; Debug- und Release-Export erfolgreich; Testressourcen weiterhin aus dem Release ausgeschlossen.
+  - **Übergabestand nach Review:** Basis `5f6e3d7` plus Astras Korrekturdiff (`game/app/main.gd`, neu `game/tests/p0_lifecycle_regression.gd` samt `.uid`), zum Zeitpunkt dieser Befundpflege ungecommittet; Commit nur nach ausdrücklicher Freigabe (G1).
+  - **M0 – Projekt läuft: ACCEPTED (20.09.2026, Project Lead).** P0 ist damit abgeschlossen. P1 bleibt gegatet, bis das vorläufige E03-Bewegungsprofil freigegeben ist (siehe §3 „E03, Bewegung“ und P1-01).
+
+**M0 – Projekt läuft: ACCEPTED (20.09.2026, nach R0).** P0-01 bis P0-05 sind angenommen; P0 ist abgeschlossen. Spätere Nachprüfungen gemäß §6.
 
 ## 5. P1 – First-Person-Spielgefühl
 
@@ -301,7 +311,7 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Titel:** Player-Grundszene, Mausblick und Grundbewegung mit Sprung.
 - **Phase:** P1 – First-Person-Spielgefühl.
 - **Milestone:** M1 – Bewegung macht den Raum spielbar; Zulauf R1.
-- **Status:** GATE_OPEN – M0/R0 und benötigtes vorläufiges E03-Profil ausstehend.
+- **Status:** GATE_OPEN – 20.09.2026: M0/R0 angenommen; es fehlt noch die ausdrückliche vorläufige Freigabe des E03-Bewegungsprofils (Kamera/FOV/Empfindlichkeit/Blickgrenzen, Körpermaße, Geschwindigkeiten, Beschleunigen/Bremsen, Gravity, Sprung-/Luft-/Steigungsgrenzen, Belegung). Nach diesem Beleg READY.
 - **Verantwortliche Rolle:** Claude Code / Opus 5.0; Junior/Autoren für frühe freiwillige Rückmeldung.
 - **Priorität:** Hoch; frühestes spielbares Ergebnis.
 - **Ziel:** Junior kann selbst schauen, laufen, an Geometrie kollidieren und springen.
