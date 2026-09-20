@@ -15,6 +15,9 @@ extends Node
 enum Phase { MENU, PREPARING, PLAYING, PAUSED }
 
 ## Systems Sandbox: neutrale Testwelt, nur im Entwicklungsmodus erreichbar.
+## Der Release-Export lässt den Ordner tests/ weg; der Zugang bleibt zusätzlich
+## über is_sandbox_allowed() gesperrt. Spätere Testdaten der Sandbox gehören
+## unter user://tests/, getrennt von regulären Spielständen (Architektur §28).
 const SANDBOX_SCENE_PATH: String = "res://tests/systems_sandbox.tscn"
 
 ## Einzige von Main selbst ausgewertete Action (E03a: Escape toggelt Pause).
@@ -172,9 +175,11 @@ func _on_window_focus_exited() -> void:
 
 
 ## Phase und Enginepause an genau einer Stelle setzen: pausiert nur in PAUSED.
+## Die Ausgabe erscheint nur mit --verbose und dient dem Standalone-Nachweis.
 func _set_phase(phase: Phase) -> void:
 	_phase = phase
 	get_tree().paused = phase == Phase.PAUSED
+	print_verbose("Main: Phase %s (paused=%s)" % [Phase.keys()[phase], get_tree().paused])
 
 
 ## Gemeinsamer Eintritt in PLAYING für Weltstart und Fortsetzen: Aktionspuffer
