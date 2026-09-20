@@ -311,7 +311,7 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Titel:** Player-Grundszene, Mausblick und Grundbewegung mit Sprung.
 - **Phase:** P1 – First-Person-Spielgefühl.
 - **Milestone:** M1 – Bewegung macht den Raum spielbar; Zulauf R1.
-- **Status:** READY – 20.09.2026; M0/R0 angenommen und E03-Bewegungsprofil vorläufig bestätigt (siehe „E03-Beleg“ unten). Kein automatischer Arbeitsbeginn; konkreter Auftrag steht aus.
+- **Status:** ACCEPTED – 20.09.2026, nach praktischem Test durch Project Lead und informellem Junior-Playtest angenommen; Befund siehe „Befund / Abnahme“ unten. M1 bleibt bis J1/R1 offen.
 - **E03-Beleg (Project Lead, 20.09.2026, vorläufiges Prototyp-Profil):**
   - **Perspektive/Kamera:** First Person; FOV 75°; keine Kameraneigung; kein Head Bob.
   - **Körper:** Spielerhöhe ca. 1,80 m; Augenhöhe ca. 1,65 m; Capsule-Collision.
@@ -340,6 +340,13 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Astra-Review:** Gate R1 in P1-06; kein separater Mouse-Look-/Jump-Review.
 - **Junior-Test:** Ja, früh informell nach funktionierendem Mausblick + WASD + Kollision + Jump; vor P1-02/03 anbieten. Formales J1 erst P1-05.
 - **Blocker / offene Entscheidung:** E03-Grundprofil; ungewöhnliche Kollisions-/Kameraprobleme zuerst Claude-Diagnose, Astra nur bei schwierigem Problem nach Leadentscheidung. Feedback erlaubt keine stillen Regeländerungen.
+- **Befund / Abnahme (D1, 20.09.2026):**
+  - **Stand:** Basis-Commit `823e750`; ungecommitteter Diff = neu `game/player/player.gd` (+`.uid`), `game/player/player.tscn`, `game/player/player_tuning.gd` (+`.uid`), `game/data/player_tuning.tres`; geändert `game/levels/vertical_slice/vertical_slice.gd` (optionaler Teilnehmer `player`, Freigabe-Weiterreichung), `game/tests/systems_sandbox.tscn` (Player statt Testkamera, Wände, Platform 0,5 m, Block 1,5 m), `game/project.godot` (nur `jump` → Leertaste). `main.gd`/`game_ui.*` unverändert. Kein Commit; Bündelung nach G1 in P1.
+  - **Aufbau:** Player (`CharacterBody3D`, `player.gd`) → BodyShape (instanzlokale Kapsel r 0,35 / h 1,80) und Head (1,65 m) → Camera3D (FOV 75). `player.gd` ist einziger Positionsschreiber; Bewegung im Physiktakt über `move_and_slide()`, Diagonalnormalisierung über `Input.get_vector`, Beschleunigen/Bremsen/Luftsteuerung/Gravity/Sprung aus `PlayerTuning`; Mausblick pro Pixel ohne Bildratenfaktor, Pitch-Clamp ±85°, Sperrfenster von 2 Frames nach jeder Freigabe gegen Kamerasprünge. Weltkamera = Player-Kamera; genau eine aktive Kamera. Freigabe ausschließlich über Level `set_gameplay_active`.
+  - **Automatisierte Tests (Claude, bestanden):** Parser/Import fehlerfrei; temporärer P1-01-Laufzeittest außerhalb des Repos 64/64 headless und 64/64 im Fensterlauf (Instanz/Kamera/Maße, 5,0 m/s ohne Drift, 20/24 m/s² exakt, diagonal 5,0 m/s, Sprung 4,95 m/s → 1,29 m, kein Luftsprung, Landung, Wand, Yaw/Pitch-Clamp, Pause ohne Bewegung/Blick, kein Nachlauf und kein Mausimpuls nach Fortsetzen, Fokusverlust in der Luft, Weltwechsel ohne alte Referenzen/Historie); R0-Regression 55/55 headless, 63/63 Windows/Vulkan; Debug-/Release-Export erfolgreich, Release weiterhin ohne `tests/`. Hinweis: Der ältere P0-03-Testlauf zeigt 129/130, weil seine Erwartung „`jump` ungebunden“ seit P1-01 absichtlich veraltet ist (`jump` ist jetzt korrekt auf Leertaste gebunden) – keine Regression.
+  - **Manueller Test (Project Lead) und informeller Junior-Playtest (20.09.2026, bestanden):** WASD funktioniert und gefällt Junior; Mouse Look funktioniert und fühlt sich gut an; Maus-Sensitivität, Gehgeschwindigkeit und Sprunghöhe werden zunächst beibehalten; Anlaufen/Stoppen ausreichend gut; Kamera/FOV für den Prototyp passend; keine störenden Kollisions- oder Hängenbleibprobleme; Pause/Fokus/Resume funktionieren weiterhin.
+  - **Baseline:** Die Werte in `game/data/player_tuning.tres` (FOV 75°, Höhe 1,80 m / Augen 1,65 m / Radius 0,35 m, Gehen 5,0 m/s, 20 m/s² / 24 m/s², Luftsteuerung 0,3, Gravity 9,8 m/s², Sprunghöhe 1,25 m, 0,10 °/px, Pitch ±85°) gelten als erste spielerisch bestätigte Baseline; keine Tuningänderung erforderlich. Sie bleiben ausdrücklich spätere Tuningwerte; Änderungen nur über ausdrücklichen Auftrag.
+  - **Noch nicht anwendbar:** Restore-/Traversal-/Duckfälle (P1-02/03, P5); Bildratenvergleich nur konstruktiv (Blick pro Pixel, Bewegung im Physiktakt).
 
 ### P1-02 – Sprint und sicheres Ducken
 
@@ -347,7 +354,7 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Titel:** Sprinten und Crouch mit sicherem Aufstehen ergänzen.
 - **Phase:** P1 – First-Person-Spielgefühl.
 - **Milestone:** M1 – Bewegung macht den Raum spielbar; Zulauf R1.
-- **Status:** PLANNED.
+- **Status:** GATE_OPEN – 20.09.2026; P1-01 ACCEPTED und Sprint 8,0 m/s aus E03 bestätigt. Es fehlen noch die vorläufigen Duckwerte (Duckhöhe/-kamerahöhe, Ducktempo), Halten/Umschalten für Sprint und Ducken sowie die Regeln für Kombinationen mit Sprung/Luft/Sprint; nach diesem E03-Ergänzungsbeleg READY.
 - **Verantwortliche Rolle:** Claude Code / Opus 5.0.
 - **Priorität:** Hoch.
 - **Ziel:** Die zwei zusätzlichen Bewegungsarten innerhalb des vorhandenen Motors verlässlich nutzbar machen.

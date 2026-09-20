@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="PlayerTuning" load_steps=2 format=3 uid="uid://do8l5kgvybhdd"]
+
+[ext_resource type="Script" uid="uid://ckshhydjyesbo" path="res://player/player_tuning.gd" id="1_tuning"]
+
+[resource]
+script = ExtResource("1_tuning")
+body_height = 1.8
+body_radius = 0.35
+eye_height = 1.65
+walk_speed = 5.0
+ground_acceleration = 20.0
+ground_deceleration = 24.0
+air_control = 0.3
+gravity = 9.8
+jump_height = 1.25
+fov = 75.0
+mouse_sensitivity = 0.1
+pitch_min = -85.0
+pitch_max = 85.0

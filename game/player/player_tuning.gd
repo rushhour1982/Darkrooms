@@ -1,0 +1,67 @@
+class_name PlayerTuning
+extends Resource
+## Statische Bewegungs-/Kamerakonfiguration des Players (Architektur §23, TDD §21).
+##
+## Alle Werte sind VORLÄUFIGE TUNINGWERTE aus dem E03-Prototyp-Profil
+## (Project Lead, 20.09.2026) und werden nach dem ersten Junior-Playtest
+## angepasst. Maße in Metern, Zeiten in Sekunden, Winkel in Grad.
+## Die Resource wird während eines Laufs als unveränderlich behandelt;
+## Laufzustand (Geschwindigkeit, Blickwinkel) gehört zur Player-Instanz.
+
+@export_group("Körper")
+## Gesamthöhe der Kollisionskapsel.
+@export_range(1.0, 2.5, 0.01, "suffix:m") var body_height: float = 1.8
+## Radius der Kollisionskapsel (vorläufig; nicht im E03-Profil genannt).
+@export_range(0.1, 1.0, 0.01, "suffix:m") var body_radius: float = 0.35
+## Höhe der Kamera über den Füßen.
+@export_range(0.5, 2.5, 0.01, "suffix:m") var eye_height: float = 1.65
+
+@export_group("Bewegung")
+@export_range(0.1, 20.0, 0.1, "suffix:m/s") var walk_speed: float = 5.0
+@export_range(0.1, 100.0, 0.1, "suffix:m/s²") var ground_acceleration: float = 20.0
+@export_range(0.1, 100.0, 0.1, "suffix:m/s²") var ground_deceleration: float = 24.0
+## Anteil der Bodenbeschleunigung, der in der Luft wirkt (reduzierte
+## Luftsteuerung; konkreter Faktor vorläufig, nicht im E03-Profil beziffert).
+@export_range(0.0, 1.0, 0.05) var air_control: float = 0.3
+
+@export_group("Sprung und Schwerkraft")
+@export_range(0.1, 50.0, 0.1, "suffix:m/s²") var gravity: float = 9.8
+## Angestrebte Sprunghöhe; die Absprunggeschwindigkeit wird daraus abgeleitet.
+@export_range(0.0, 5.0, 0.01, "suffix:m") var jump_height: float = 1.25
+
+@export_group("Kamera")
+@export_range(1.0, 179.0, 0.5, "suffix:°") var fov: float = 75.0
+## Blickdrehung pro Mauspixel; bewusst nicht mit der Bildrate skaliert.
+@export_range(0.001, 1.0, 0.001, "suffix:°/px") var mouse_sensitivity: float = 0.10
+@export_range(-89.0, 0.0, 0.5, "suffix:°") var pitch_min: float = -85.0
+@export_range(0.0, 89.0, 0.5, "suffix:°") var pitch_max: float = 85.0
+
+
+## Absprunggeschwindigkeit für die konfigurierte Sprunghöhe: v = sqrt(2·g·h).
+func get_jump_velocity() -> float:
+	return sqrt(2.0 * gravity * jump_height)
+
+
+## Meldet ungültige Wertebereiche beim Aufbau (Architektur §23) und gibt
+## false zurück, wenn der Player damit nicht sicher betrieben werden kann.
+func validate(context: String) -> bool:
+	var problems: PackedStringArray = []
+	if body_height <= 2.0 * body_radius:
+		problems.append("body_height muss größer als 2 × body_radius sein")
+	if eye_height <= 0.0 or eye_height >= body_height:
+		problems.append("eye_height muss zwischen 0 und body_height liegen")
+	if walk_speed <= 0.0 or ground_acceleration <= 0.0 or ground_deceleration <= 0.0:
+		problems.append("walk_speed, ground_acceleration und ground_deceleration müssen positiv sein")
+	if air_control < 0.0 or air_control > 1.0:
+		problems.append("air_control muss zwischen 0 und 1 liegen")
+	if gravity <= 0.0 or jump_height < 0.0:
+		problems.append("gravity muss positiv und jump_height nicht negativ sein")
+	if fov <= 0.0 or fov >= 180.0:
+		problems.append("fov muss zwischen 0 und 180 liegen")
+	if mouse_sensitivity <= 0.0:
+		problems.append("mouse_sensitivity muss positiv sein")
+	if pitch_min >= pitch_max or pitch_min < -90.0 or pitch_max > 90.0:
+		problems.append("pitch_min/pitch_max müssen geordnet und innerhalb ±90° liegen")
+	for problem in problems:
+		push_error("%s: PlayerTuning ungültig – %s." % [context, problem])
+	return problems.is_empty()

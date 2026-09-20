@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://chhikhl6gap1w"]
+
+[ext_resource type="Script" uid="uid://dc1h8t63ghhqj" path="res://player/player.gd" id="1_player"]
+[ext_resource type="Resource" uid="uid://do8l5kgvybhdd" path="res://data/player_tuning.tres" id="2_tuning"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_body"]
+resource_local_to_scene = true
+radius = 0.35
+height = 1.8
+
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1_player")
+tuning = ExtResource("2_tuning")
+
+[node name="BodyShape" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_body")
+
+[node name="Head" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.65, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Head"]
+fov = 75.0
