@@ -1,7 +1,8 @@
-[gd_scene load_steps=19 format=3 uid="uid://bjuyxuhvedmyx"]
+[gd_scene load_steps=26 format=3 uid="uid://bjuyxuhvedmyx"]
 
 [ext_resource type="Script" uid="uid://6j8k7raysejf" path="res://levels/vertical_slice/vertical_slice.gd" id="1_level"]
 [ext_resource type="PackedScene" uid="uid://chhikhl6gap1w" path="res://player/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" uid="uid://c73knaofkyasr" path="res://world/traversal/traversal_marker.tscn" id="3_marker"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_floor"]
 size = Vector3(20, 0.2, 20)
@@ -38,6 +39,24 @@ size = Vector3(4, 0.3, 3)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_low_ceiling"]
 size = Vector3(4, 0.3, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_vault"]
+size = Vector3(2, 0.8, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_vault"]
+size = Vector3(2, 0.8, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_high"]
+size = Vector3(2, 1.3, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_high"]
+size = Vector3(2, 1.3, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_roof"]
+size = Vector3(2, 0.3, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_roof"]
+size = Vector3(2, 0.3, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_marker"]
 size = Vector3(0.6, 0.6, 0.6)
@@ -150,6 +169,60 @@ mesh = SubResource("BoxMesh_low_ceiling")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="World/LowPassage"]
 shape = SubResource("BoxShape3D_low_ceiling")
+
+[node name="VaultObstacle" type="StaticBody3D" parent="World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="World/VaultObstacle"]
+mesh = SubResource("BoxMesh_vault")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="World/VaultObstacle"]
+shape = SubResource("BoxShape3D_vault")
+
+[node name="VaultMarker" parent="World" instance=ExtResource("3_marker")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.5)
+
+[node name="Exit" parent="World/VaultMarker"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.5)
+
+[node name="HighObstacle" type="StaticBody3D" parent="World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.65, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="World/HighObstacle"]
+mesh = SubResource("BoxMesh_high")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="World/HighObstacle"]
+shape = SubResource("BoxShape3D_high")
+
+[node name="HighMarker" parent="World" instance=ExtResource("3_marker")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0, 0.5)
+
+[node name="Exit" parent="World/HighMarker"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, -0.5)
+
+[node name="BlockedObstacle" type="StaticBody3D" parent="World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.4, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="World/BlockedObstacle"]
+mesh = SubResource("BoxMesh_vault")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="World/BlockedObstacle"]
+shape = SubResource("BoxShape3D_vault")
+
+[node name="BlockedRoof" type="StaticBody3D" parent="World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 2.05, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="World/BlockedRoof"]
+mesh = SubResource("BoxMesh_roof")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="World/BlockedRoof"]
+shape = SubResource("BoxShape3D_roof")
+
+[node name="BlockedMarker" parent="World" instance=ExtResource("3_marker")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 0.5)
+
+[node name="Exit" parent="World/BlockedMarker"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.5)
 
 [node name="Marker" type="MeshInstance3D" parent="World"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, -8)

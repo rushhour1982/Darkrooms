@@ -43,6 +43,19 @@ extends Resource
 ## Angestrebte Sprunghöhe; die Absprunggeschwindigkeit wird daraus abgeleitet.
 @export_range(0.0, 5.0, 0.01, "suffix:m") var jump_height: float = 1.25
 
+@export_group("Traversal")
+## Maximale Höhe eines Hindernisses, das über eine erlaubte Passage überwunden wird.
+@export_range(0.1, 3.0, 0.01, "suffix:m") var traversal_max_height: float = 0.9
+## Maximale horizontale Entfernung zum Eintrittspunkt der Passage.
+@export_range(0.1, 5.0, 0.01, "suffix:m") var traversal_detect_range: float = 1.1
+## Tempo der kontrollierten Kletterbewegung (vorläufig, nicht im E03-Nachtrag beziffert).
+@export_range(0.1, 20.0, 0.1, "suffix:m/s") var traversal_speed: float = 3.0
+## Maximaler Winkel zwischen Bewegungsabsicht und Passagerichtung (vorläufig).
+@export_range(1.0, 90.0, 1.0, "suffix:°") var traversal_max_angle: float = 45.0
+## Abstand, um den der Körper über die Zielhöhe gehoben wird, bevor er
+## waagerecht zum Ziel fährt; die Schwerkraft setzt ihn danach ab (vorläufig).
+@export_range(0.0, 0.3, 0.01, "suffix:m") var traversal_lift_margin: float = 0.05
+
 @export_group("Kamera")
 @export_range(1.0, 179.0, 0.5, "suffix:°") var fov: float = 75.0
 ## Blickdrehung pro Mauspixel; bewusst nicht mit der Bildrate skaliert.
@@ -74,6 +87,10 @@ func validate(context: String) -> bool:
 		problems.append("es muss gelten: 0 < crouch_speed ≤ walk_speed ≤ sprint_speed")
 	if posture_transition_time < 0.0 or stand_clearance_margin < 0.0:
 		problems.append("posture_transition_time und stand_clearance_margin dürfen nicht negativ sein")
+	if traversal_max_height <= 0.0 or traversal_detect_range <= 0.0 or traversal_speed <= 0.0:
+		problems.append("traversal_max_height, traversal_detect_range und traversal_speed müssen positiv sein")
+	if traversal_max_angle <= 0.0 or traversal_max_angle > 90.0 or traversal_lift_margin < 0.0:
+		problems.append("traversal_max_angle muss in (0, 90] liegen und traversal_lift_margin nicht negativ sein")
 	if air_control < 0.0 or air_control > 1.0:
 		problems.append("air_control muss zwischen 0 und 1 liegen")
 	if gravity <= 0.0 or jump_height < 0.0:
