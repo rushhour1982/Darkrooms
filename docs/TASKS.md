@@ -188,7 +188,7 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Titel:** Eingabeaktionen und sicheren Menü-/Pausenwechsel vorbereiten.
 - **Phase:** P0 – Projektbasis und technische Verifikation.
 - **Milestone:** M0 – Projekt läuft; Zulauf R0.
-- **Status:** READY – 20.09.2026; P0-02 ACCEPTED und E03a „Bedienung“ vorläufig bestätigt (siehe „E03a-Beleg“ unten). Kein automatischer Arbeitsbeginn; konkreter Auftrag steht aus.
+- **Status:** ACCEPTED – 20.09.2026, nach manuellem Godot-Test durch den Project Lead angenommen; Befund siehe „Befund / Abnahme“ unten. M0 bleibt bis R0 (P0-05) offen.
 - **E03a-Beleg (Project Lead, 20.09.2026, vorläufig verbindlich für Version 0.1):**
   - **Pause:** Escape toggelt die Pause während aktivem Gameplay; Escape im Pausezustand setzt fort. In Hauptmenü-/Nicht-Gameplay-Phasen löst Escape keine ungewollte Gameplay-Fortsetzung aus.
   - **Fokusverlust:** Verliert das laufende Gameplay den Fensterfokus, wird automatisch pausiert. Bei Rückkehr des Fokus wird nicht automatisch fortgesetzt; der Spieler muss Fortsetzen bewusst auslösen.
@@ -206,7 +206,7 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Ausdrücklich verbotene Änderungen:** V1; kein InputManager, Controller-/Rebindingframework, Player-Motor oder Inventar-/Lesepausenregel. Keine neuen Systeme hinter vorbereiteten Action-Namen.
 - **Konkrete Arbeit:** 1. Actions `move_forward`, `move_backward`, `move_left`, `move_right`, `jump`, `sprint`, `crouch`, `interact`, `flashlight`, `inventory`, `use_item`, `pause` vorbereiten. WASD entspricht dem Auftrag; weitere konkrete Belegungen nur aus bestätigtem Testprofil übernehmen, sonst ungebunden lassen. 2. Main als einzigen Besitzer der Weltpause verwenden; Main/UI bleiben bedienbar, WorldHost ausdrücklich pausierbar. 3. Minimales Pausepanel mit Fortsetzen/Rückkehr/Beenden ergänzen. 4. Mausfang, sinnvoller UI-Fokus, konsumierte UI-Eingaben und Aktionspuffer beim Phasenwechsel behandeln. 5. Bestätigte Fokusverlustregel anwenden; keine Kamera-/Gameplayaktion durch Wiederaufnahme-Klick.
 - **Nicht-Ziele:** Auswertung aller vorbereiteten Gameplayactions, vollständige Einstellungen, Gameplay-Timerdienste oder neue UI-Ansichten.
-- **Acceptance Criteria:** Aktives Spiel hat passenden Mausfang, Menü/Pause freien Zeiger und bedienbaren Fokus. Nur Main setzt die Pause. Pausierte Welt und aktive UI sind praktisch unterscheidbar; Fortsetzen kehrt konsistent zurück. Versteckte Panels fangen keine Eingaben ab. Fokuswechsel folgt dem bestätigten Profil; E06 zu Inventory/Lesen bleibt offen. Tests mit echtem Player sind explizit P1 zugeordnet.
+- **Acceptance Criteria:** Aktives Spiel hat passenden Mausfang, Menü/Pause freien Zeiger und bedienbaren Fokus. Nur Main setzt die Pause. Pausierte Welt und aktive UI sind praktisch unterscheidbar; Fortsetzen kehrt konsistent zurück. Versteckte Panels fangen keine Eingaben ab. Fokuswechsel folgt dem bestätigten Profil; E06 zu Inventory/Lesen bleibt offen. Tests mit echtem Player sind explizit P1 zugeordnet. **Erfüllt (20.09.2026):** Mausfang in der aktiven Sandbox, freier Zeiger und bedienbarer Fokus in Menü/Pause, Pause allein durch Main (`SceneTree.paused` nur in PAUSED), praktisch unterscheidbare pausierte Welt bei aktiver UI, konsistentes Fortsetzen, keine Eingabeaufnahme durch versteckte Panels und Fokusverhalten gemäß E03a sind durch Fensterlauf-Test und manuellen Godot-Test belegt; E06 bleibt offen, Player-Tests bleiben P1 (siehe „Befund / Abnahme“).
 - **Auszuführende Tests:** CLI-/Parserprüfung; Input Map gegen Actionliste prüfen; Start → Pause → Fortsetzen → Menü mehrfach testen, inklusive Tastaturbedienung, Fensterwechsel und Wechsel während gehaltener Tasten. Pausenwirkung mit vorhandenen Engine-Monitoren oder einer temporären lokalen Probe prüfen, danach Probe entfernen. Keine dauerhafte Testlogik nur für einen Zähler bauen.
 - **Erforderlicher Godot-Test:** Editorlauf mit Maus-/Tastaturbedienung, Alt-Tab/Fokuswechsel, schneller Wiederholung und Fenstergrößenwechsel; UI-Reaktion während pausierter Welt belegen.
 - **Windows-Exporttest:** Dieselben Fokus-/Pausenfälle in P0-04 im Standalone wiederholen.
@@ -216,6 +216,14 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Astra-Review:** Gate R0 in P0-05; spätere Playerintegration gemeinsam in R1.
 - **Junior-Test:** Optional Menü/Pause ansehen; erster Bewegungstest erst P1-01.
 - **Blocker / offene Entscheidung:** Fokus- und Testbelegungsregel vor dem betroffenen Verhalten klären. Keine stillschweigende Weltpause für künftige Inventory-/Storyansichten.
+- **Befund / Abnahme (D1, 20.09.2026):**
+  - **Stand:** Basis-Commit `47b5b40`; ungecommitteter Diff = geänderte Dateien `game/project.godot` (nur neuer Abschnitt `[input]`), `game/app/main.gd`, `game/ui/game_ui.gd`, `game/ui/game_ui.tscn`, `game/tests/systems_sandbox.tscn`. Keine neuen Dateien, keine Autoloads. Engine/Profil wie P0-02.
+  - **Input Map:** `move_forward`/`move_backward`/`move_left`/`move_right` = W/S/A/D (physisch), `pause` = Escape; `jump`, `sprint`, `crouch`, `interact`, `flashlight`, `inventory`, `use_item` angelegt, aber ungebunden bis zum bestätigten E03-Bewegungsprofil. Main wertet nur `pause` aus.
+  - **Aufbau:** Phase PAUSED ergänzt; Main setzt als Einziges `SceneTree.paused` (nur in PAUSED), sperrt/freigibt Gameplay über `set_gameplay_active` und verwirft beim Eintritt in PLAYING den Aktionspuffer. `pause` in `_unhandled_input` nach UI-Verarbeitung; im Menü ohne Wirkung. `Window.focus_exited` pausiert nur in PLAYING; `focus_entered` ist bewusst nicht verbunden. GameUI: Pausepanel (Fortsetzen/Zurück zum Menü/Beenden), Mausmodus VISIBLE in Menü/Pause/Übergang und CAPTURED in der aktiven Welt, Fokus auf „Fortsetzen“, Pausehinweis aus der Input Map; HUD-Menübutton entfällt. Sandbox: rotierender Marker (AnimationPlayer, kein Script) als sichtbares Pausenmittel.
+  - **CLI-/Laufzeittests (Claude, bestanden):** `--check-only`, `--headless --import` fehlerfrei; temporärer Laufzeittest außerhalb des Repos mit 130 Prüfungen im Fensterlauf 130/130 bestanden (Input Map, 5× Escape-Pause/Fortsetzen, Probe: Welt-`_process` steht in der Pause, UI verarbeitet weiter, gehaltene Taste über Pause/Fortsetzen verworfen, synthetischer Fokusverlust → PAUSED, Fokusrückkehr bleibt PAUSED, Rückkehr ins Menü aus Pause, Escape/Fokusverlust im Menü wirkungslos, zweiter Zyklus); headless nur die 6 Mausmodus-Prüfungen nicht aussagekräftig. Editorstart fehlerfrei.
+  - **Manueller Godot-Runtime-Test (Project Lead, 20.09.2026, bestanden):** Hauptmenü Maus sichtbar und frei; Sandbox Maus gefangen; Escape pausiert zuverlässig; Pause stoppt den sichtbaren Sandbox-Marker; Fortsetzen aktiviert Gameplay wieder; mehrfaches Pause/Fortsetzen funktioniert; Alt+Tab/Fokusverlust pausiert; Fokusrückkehr setzt nicht automatisch fort; bewusstes Fortsetzen funktioniert; Rückkehr zum Hauptmenü funktioniert; keine sichtbaren Runtime-/Debuggerfehler. Ergebnis: bestanden.
+  - **Nicht ausgeführt / noch nicht anwendbar:** Standalone-Wiederholung der Pause-/Fokusfälle und Release-Sperre des Sandboxzugangs (P0-04); Mausblick/„erster Mausimpuls nach Fortsetzen“ und Player-Regressionen (P1-01); Inventar-/Lesepause (E06 offen).
+  - Kein Commit; Bündelung mit P0-04 zum Bootstrap-Integrationsstand gemäß G1.
 
 ### P0-04 – Windows-Testexport und Debug-/Release-Grenze
 
@@ -223,7 +231,7 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Titel:** Reproduzierbaren Windows-x86-64-Export praktisch nachweisen.
 - **Phase:** P0 – Projektbasis und technische Verifikation.
 - **Milestone:** M0 – Projekt läuft; Zulauf R0.
-- **Status:** PLANNED.
+- **Status:** READY – 20.09.2026; P0-01 bis P0-03 ACCEPTED, E01 einschließlich Templates 4.7.2.stable belegt, E02a unverändert dokumentiert. Kein automatischer Arbeitsbeginn; konkreter Auftrag steht aus.
 - **Verantwortliche Rolle:** Claude Code / Opus 5.0; praktische Bedienprüfung in Godot/Windows, bei Bedarf durch den User.
 - **Priorität:** Hoch.
 - **Ziel:** Editorfunktion und eigenständigen Build abgleichen; Entwicklungszugang und Releasegrenze früh beweisen.
