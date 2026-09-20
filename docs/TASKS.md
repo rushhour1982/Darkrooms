@@ -354,7 +354,7 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Titel:** Sprinten und Crouch mit sicherem Aufstehen ergänzen.
 - **Phase:** P1 – First-Person-Spielgefühl.
 - **Milestone:** M1 – Bewegung macht den Raum spielbar; Zulauf R1.
-- **Status:** READY – 20.09.2026; P1-01 ACCEPTED (praktisch geprüft, Junior-Playtest) und E03 um das Sprint-/Crouch-Profil ergänzt (siehe „E03-Nachtrag“ unten). Kein automatischer Arbeitsbeginn; konkreter Auftrag steht aus.
+- **Status:** ACCEPTED – 20.09.2026, nach praktischem Test durch Project Lead und informellem Junior-Playtest angenommen; Befund siehe „Befund / Abnahme“ unten. M1 bleibt bis J1/R1 offen.
 - **E03-Nachtrag (Project Lead, 20.09.2026, vorläufiges Sprint-/Crouch-Profil):**
   - **Sprint:** linke Shift-Taste halten; Sprintgeschwindigkeit 8,0 m/s; keine Ausdauer; Sprint während Ducken nicht möglich; normales Springen aus dem Sprint erlaubt, vorhandener horizontaler Impuls darf beim Sprung erhalten bleiben; keine zusätzlichen Sprintmechaniken.
   - **Crouch:** linke Strg-Taste halten; geduckte Geschwindigkeit 2,5 m/s; Körperhöhe stehend ca. 1,80 m / geduckt ca. 1,20 m; Augenhöhe stehend ca. 1,65 m / geduckt ca. 1,05 m; Übergang Stehen/Ducken kurz und weich; Loslassen von Strg versucht aufzustehen; Aufstehen nur bei ausreichend freiem Raum über dem Spieler, bei blockierter Decke bleibt er geduckt; kein Crouch-Jump, kein Slide, kein Prone.
@@ -381,6 +381,13 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Astra-Review:** Gate R1 in P1-06; kein einzelner Sprint-/Crouch-Review.
 - **Junior-Test:** Optional kurze Zwischenprobe nach technischer Prüfung; formale Abnahme zusammen in J1.
 - **Blocker / offene Entscheidung:** Sprint-/Duckbedienung und Kombinationen müssen vor Umsetzung bestätigt sein. Ausdauer und Fallfolgen bleiben außerhalb P1.
+- **Befund / Abnahme (D1, 20.09.2026):**
+  - **Stand:** Basis-Commit `7c56dda`; ungecommitteter Diff = geändert `game/player/player.gd`, `game/player/player_tuning.gd`, `game/data/player_tuning.tres`, `game/project.godot` (nur `sprint` → linke Shift, `crouch` → linke Strg, physisch), `game/tests/systems_sandbox.tscn` (niedriger Durchgang). `player.tscn`, `main.gd`, `game_ui.*`, `vertical_slice.gd` unverändert; keine neuen Dateien. Kein Commit; Bündelung nach G1 in P1.
+  - **Aufbau:** Haltungsachse `Posture {STANDING, CROUCHED}` getrennt von der Fortbewegung (`is_on_floor()`), keine Zustandsmaschine. Sprint = Shift halten, 8,0 m/s, nur stehend, Sprung aus dem Sprint mit erhaltenem Horizontalimpuls (Luftsteuerung lenkt nur um, bremst nie). Crouch = Strg halten, 2,5 m/s, kein Sprung in der Hocke, Haltungswechsel nur am Boden. Kollision bleibt beim Ducken hoch, bis die Kamera in 0,15 s auf 1,05 m gesunken ist, dann instanzlokale Kapsel 1,20 m; beim Aufstehen Kapsel sofort 1,80 m nach positiver Freiraumprüfung, Kamera weich auf 1,65 m – Kamera liegt nie außerhalb der Kapsel. Aufstehprüfung über `PhysicsDirectSpaceState3D.intersect_shape` mit stehender Prüfkapsel (+0,05 m Rand, eigener Körper ausgeschlossen); unter blockierter Decke bleibt der Player geduckt und steht beim Verlassen automatisch auf.
+  - **Automatisierte Tests (Claude, bestanden):** Parser/Import fehlerfrei; temporärer P1-02-Laufzeittest außerhalb des Repos 61/61 headless und 61/61 im Fensterlauf (Bindings, Sprint 8,00/Gehen 5,00/Crouch 2,50 m/s, Sprung aus Sprint mit 8,00 m/s in der Luft, Ducken/Aufstehen mit Kapsel-/Kamerahöhen, Sprint in Hocke gesperrt, kein Sprung in Hocke, niedriger Durchgang blockiert stehend/passierbar geduckt, `can_stand_up()` false unter Decke, automatisches Aufstehen beim Verlassen ohne Tunneling, Pause/Fokus mit gehaltenen Tasten ohne Nachlauf oder Kamera-/Body-Sprung, Instanzisolierung mit temporärer zweiter Instanz bei unveränderter Tuningdefinition, Weltwechsel spawnt stehend); P1-01-Test 62/64 – die zwei Abweichungen sind die seit P1-02 absichtlich überholten Erwartungen „`sprint`/`crouch` ungebunden“, keine Regression; R0-Regression 55/55 headless, 63/63 Windows/Vulkan; Debug-/Release-Export erfolgreich, Release ohne `tests/`.
+  - **Manueller Test (Project Lead) und informeller Junior-Playtest (20.09.2026, bestanden):** normales Laufen weiterhin in Ordnung; Sprint mit linker Shift funktioniert und fühlt sich gut an, Tempo beibehalten; Springen aus Sprint funktioniert; Ducken mit linker Strg funktioniert und fühlt sich gut an, Tempo beibehalten; Kameraübergang angenehm; niedriger Durchgang funktioniert; Aufstehen unter blockierter Decke korrekt verhindert; nach Verlassen sauberes Aufstehen; Sprint und Crouch schließen sich aus; Pause/Fokus/Resume weiterhin in Ordnung; keine störenden Kollisionsprobleme.
+  - **Baseline:** Sprint 8,0 m/s, Crouch 2,5 m/s, Körper 1,80 / 1,20 m, Augen 1,65 / 1,05 m sowie die von Claude gewählten `posture_transition_time = 0,15 s` und `stand_clearance_margin = 0,05 m` gelten als spielerisch getestete Baseline (vom Project Lead bestätigt); keine Tuningänderung erforderlich. Alle Werte bleiben spätere Tuningwerte; Änderungen nur per Auftrag.
+  - **Grenzen:** Haltungswechsel nur am Boden (konservative Auslegung von „kein Crouch-Jump“); Geräusch-/Sichtbarkeitswirkung von Sprint/Ducken folgt in P1-04/P4; Restore-Fälle erst P5.
 
 ### P1-03 – Einfaches markerbasiertes Traversal
 
@@ -388,7 +395,7 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Titel:** Eine ausdrücklich erlaubte Kletterpassage im Player-Motor prototypisieren.
 - **Phase:** P1 – First-Person-Spielgefühl.
 - **Milestone:** M1 – Bewegung macht den Raum spielbar; Zulauf R1.
-- **Status:** PLANNED.
+- **Status:** GATE_OPEN – 20.09.2026; P1-01/02 ACCEPTED. Es fehlt die E03-Ergänzung für Traversal: Auslösung (Taste/Bedingung), Reichweite, erlaubte Hindernishöhe und Körper-/Haltungsgrenzen, Passage und vorläufiger Ablauf. Nach diesem Beleg READY.
 - **Verantwortliche Rolle:** Claude Code / Opus 5.0.
 - **Priorität:** Hoch; frühes technisches Risiko.
 - **Ziel:** Grundklettern mit geprüftem Eintritt, Weg, Ausstieg und sicherem Abbruch zeigen.

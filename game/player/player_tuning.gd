@@ -16,8 +16,22 @@ extends Resource
 ## Höhe der Kamera über den Füßen.
 @export_range(0.5, 2.5, 0.01, "suffix:m") var eye_height: float = 1.65
 
+@export_group("Ducken")
+## Kapselhöhe in geduckter Haltung.
+@export_range(0.5, 2.5, 0.01, "suffix:m") var crouch_body_height: float = 1.2
+## Kamerahöhe über den Füßen in geduckter Haltung.
+@export_range(0.3, 2.5, 0.01, "suffix:m") var crouch_eye_height: float = 1.05
+@export_range(0.1, 20.0, 0.1, "suffix:m/s") var crouch_speed: float = 2.5
+## Dauer des weichen Kameraübergangs zwischen Stehen und Ducken (vorläufig,
+## nicht im E03-Nachtrag beziffert). Die Kollisionsform wechselt sofort.
+@export_range(0.0, 1.0, 0.01, "suffix:s") var posture_transition_time: float = 0.15
+## Zusätzlicher Freiraum, den die Aufstehprüfung über der stehenden Kapsel
+## und unter den Füßen verlangt (vorläufig, nicht im E03-Nachtrag beziffert).
+@export_range(0.0, 0.3, 0.01, "suffix:m") var stand_clearance_margin: float = 0.05
+
 @export_group("Bewegung")
 @export_range(0.1, 20.0, 0.1, "suffix:m/s") var walk_speed: float = 5.0
+@export_range(0.1, 30.0, 0.1, "suffix:m/s") var sprint_speed: float = 8.0
 @export_range(0.1, 100.0, 0.1, "suffix:m/s²") var ground_acceleration: float = 20.0
 @export_range(0.1, 100.0, 0.1, "suffix:m/s²") var ground_deceleration: float = 24.0
 ## Anteil der Bodenbeschleunigung, der in der Luft wirkt (reduzierte
@@ -50,8 +64,16 @@ func validate(context: String) -> bool:
 		problems.append("body_height muss größer als 2 × body_radius sein")
 	if eye_height <= 0.0 or eye_height >= body_height:
 		problems.append("eye_height muss zwischen 0 und body_height liegen")
+	if crouch_body_height <= 2.0 * body_radius or crouch_body_height >= body_height:
+		problems.append("crouch_body_height muss zwischen 2 × body_radius und body_height liegen")
+	if crouch_eye_height <= 0.0 or crouch_eye_height >= crouch_body_height:
+		problems.append("crouch_eye_height muss zwischen 0 und crouch_body_height liegen")
 	if walk_speed <= 0.0 or ground_acceleration <= 0.0 or ground_deceleration <= 0.0:
 		problems.append("walk_speed, ground_acceleration und ground_deceleration müssen positiv sein")
+	if sprint_speed < walk_speed or crouch_speed <= 0.0 or crouch_speed > walk_speed:
+		problems.append("es muss gelten: 0 < crouch_speed ≤ walk_speed ≤ sprint_speed")
+	if posture_transition_time < 0.0 or stand_clearance_margin < 0.0:
+		problems.append("posture_transition_time und stand_clearance_margin dürfen nicht negativ sein")
 	if air_control < 0.0 or air_control > 1.0:
 		problems.append("air_control muss zwischen 0 und 1 liegen")
 	if gravity <= 0.0 or jump_height < 0.0:

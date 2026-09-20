@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://bjuyxuhvedmyx"]
+[gd_scene load_steps=19 format=3 uid="uid://bjuyxuhvedmyx"]
 
 [ext_resource type="Script" uid="uid://6j8k7raysejf" path="res://levels/vertical_slice/vertical_slice.gd" id="1_level"]
 [ext_resource type="PackedScene" uid="uid://chhikhl6gap1w" path="res://player/player.tscn" id="2_player"]
@@ -32,6 +32,12 @@ size = Vector3(1.5, 1.5, 1.5)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_block"]
 size = Vector3(1.5, 1.5, 1.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_low_ceiling"]
+size = Vector3(4, 0.3, 3)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_low_ceiling"]
+size = Vector3(4, 0.3, 3)
 
 [sub_resource type="BoxMesh" id="BoxMesh_marker"]
 size = Vector3(0.6, 0.6, 0.6)
@@ -135,6 +141,15 @@ mesh = SubResource("BoxMesh_block")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="World/Block"]
 shape = SubResource("BoxShape3D_block")
+
+[node name="LowPassage" type="StaticBody3D" parent="World"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1.65, 5)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="World/LowPassage"]
+mesh = SubResource("BoxMesh_low_ceiling")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="World/LowPassage"]
+shape = SubResource("BoxShape3D_low_ceiling")
 
 [node name="Marker" type="MeshInstance3D" parent="World"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, -8)
