@@ -99,8 +99,8 @@ Nach P1-01 direkt eine kurze freiwillige Junior-Probe ermöglichen; nicht auf Sp
 
 | Gate / offener Teil | Jetzt benötigter Befund | Behandlung |
 | --- | --- | --- |
-| E01 | Tatsächliche Godot-Version **4.7.2 Stable**, GDScript-Ausgabe, passende Windows-x86-64-Templates, CPU/GPU/VRAM/RAM/Windows | P0-01 erfasst und prüft. Bis zum Nachweis keine abhängige Projektanlage. Abweichende Installation nicht still ersetzen. |
-| E02a | Ein ausdrücklich gewähltes vorläufiges Renderer-Testprofil einschließlich Gerät und Testauflösung | P0-01 bereitet Auswahl vor; Project Lead bewertet den technischen Vorschlag. Keine Variante wird in dieser Planung bevorzugt. Vor P0-02 dokumentieren. |
+| E01 | Tatsächliche Godot-Version **4.7.2 Stable**, GDScript-Ausgabe, passende Windows-x86-64-Templates, CPU/GPU/VRAM/RAM/Windows | P0-01 erfasst und prüft. Bis zum Nachweis keine abhängige Projektanlage. Abweichende Installation nicht still ersetzen. **Beleg 20.09.2026: ERFÜLLT** (P0-01, Project Lead); Details bei P0-01 „Befund / Abnahme“. |
+| E02a | Ein ausdrücklich gewähltes vorläufiges Renderer-Testprofil einschließlich Gerät und Testauflösung | P0-01 bereitet Auswahl vor; Project Lead bewertet den technischen Vorschlag. Keine Variante wird in dieser Planung bevorzugt. Vor P0-02 dokumentieren. **Beleg 20.09.2026: vorläufig gewählt** – Mobile + Vulkan, 1920×1080, erfasster Samsung-Laptop; Compatibility Rückfall, Forward+ späterer Vergleich (E02b); keine Endentscheidung für V0.1. |
 | E03, zunächst Bedienung | Testbelegung für Pause und Regel bei Fokusverlust/-rückkehr | Vor P0-03 den benötigten Teil mit Project Lead/Autoren vorläufig bestätigen; keine neue Gate-ID. |
 | E03, Bewegung | Kamera/FOV/Empfindlichkeit/Blickgrenzen, Körpermaße, Geschwindigkeiten, Beschleunigen/Bremsen, Gravity, Sprung-/Luft-/Steigungsgrenzen und Bedienung | Vor P1-01 das benötigte vorläufige Profil freigeben. Sprint-/Duckkombinationen und Traversalauslösung/-grenzen spätestens vor P1-02/03 ergänzen. Bis J1/R1 reproduzierbare Befunde; keine finalen Raum-/Fluchtmaße. |
 | E12a | Kleine bekannte Testtonquelle, erlaubte Lautstärke, Hörgerät und benötigtes Testimportprofil | Vor P1-04 bestätigen; kein Blocker für den stillen frühen P1-01-Test. Keine finale Soundbibliothek. |
@@ -116,7 +116,7 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Titel:** Engine, Hardware und vorläufiges Testprofil verifizieren.
 - **Phase:** P0 – Projektbasis und technische Verifikation.
 - **Milestone:** M0 – Projekt läuft; Zulauf R0.
-- **Status:** READY für die begrenzte Bestandsprüfung; E01/E02a sind noch nicht nachgewiesen.
+- **Status:** ACCEPTED – 20.09.2026, geprüft und abgenommen durch Project Lead; Befund siehe „Befund / Abnahme“ unten.
 - **Verantwortliche Rolle:** Claude Code / Opus 5.0 für Befunderhebung; Project Lead bewertet und koordiniert die Profilwahl.
 - **Priorität:** Hoch; zuerst ausführen.
 - **Ziel:** Die reale Entwicklungsbasis feststellen, bevor Projektdateien entstehen.
@@ -138,6 +138,12 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Astra-Review:** Gate R0 in P0-05; kein separater Setup-Review. Schwieriger Basisfehler nur nach Entscheidung des Project Leads an Astra.
 - **Junior-Test:** Nein; noch keine spielbare Anwendung.
 - **Blocker / offene Entscheidung:** Reale Installation, GPU/VRAM, Templates und E02a noch unbekannt. Abschluss kann eine gezielte Templateinstallation oder einen ausdrücklichen neuen Enginebeschluss benötigen; beides wird hier nicht vorweggenommen.
+- **Befund / Abnahme (D1, 20.09.2026):**
+  - **E01: ERFÜLLT.** Godot **4.7.2 Stable** (`4.7.2.stable.official.ed1daf0bf`), GDScript-Ausgabe ohne .NET, x86-64 bestätigt. Fester Enginepfad: `C:\GameDev\Godot\4.7.2\Godot_v4.7.2-stable_win64.exe` (plus `_console.exe`). Export Templates `4.7.2.stable` (offizielles Paket, SHA512 geprüft) unter `%APPDATA%\Godot\export_templates\4.7.2.stable\` installiert; Windows-x86-64-Debug-/Release-Vorlagen vorhanden und verifiziert.
+  - **Hardware/Windows:** Samsung Galaxy Book 750QGK, Intel Core 7 150U, nur integrierte Intel-GPU (128 MB dediziert / ~8 GB shared), 16 GB RAM, Windows 11 Home 25H2 Build 26200.9457, 1920×1080. Projektmanagerstart fehlerfrei; Vulkan-, D3D12- und OpenGL-Initialisierung geprüft.
+  - **E02a: VORLÄUFIG GEWÄHLT** durch Project Lead: **Mobile-Renderer + Vulkan**, Testauflösung **1920×1080**, Zielgerät der erfasste Samsung-Laptop, möglichst Netzbetrieb. Compatibility bleibt Rückfalloption; Forward+ wird später mit repräsentativer Szene gegen Mobile verglichen (E02b). Keine endgültige Rendererentscheidung für V0.1.
+  - Keine verbleibenden Blocker für P0-02. Der Nachweis der Templates im Editor-Dialog und der erste echte Export folgen mit dem ersten Projekt (P0-02/P0-04).
+  - Repository blieb während P0-01 unverändert (Basis-Commit `1190611`; alle Installationen außerhalb des Repositories); kein Commit.
 
 ### P0-02 – Startbare Main-/UI-/Sandbox-Grundhülle
 
@@ -145,7 +151,7 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Titel:** Minimales Godot-Projekt mit wiederverwendbarem Main-Lebenszyklus starten.
 - **Phase:** P0 – Projektbasis und technische Verifikation.
 - **Milestone:** M0 – Projekt läuft; Zulauf R0.
-- **Status:** GATE_OPEN – E01/E02a und P0-01-Befund ausstehend.
+- **Status:** READY – 20.09.2026; E01 erfüllt, E02a vorläufig gewählt, P0-01 ACCEPTED. Kein automatischer Arbeitsbeginn; konkreter Auftrag steht aus.
 - **Verantwortliche Rolle:** Claude Code / Opus 5.0.
 - **Priorität:** Hoch.
 - **Ziel:** Ein kleines wirklich startbares Projekt ohne vorgezogene Systemarchitektur schaffen.
