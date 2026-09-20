@@ -151,7 +151,7 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Titel:** Minimales Godot-Projekt mit wiederverwendbarem Main-Lebenszyklus starten.
 - **Phase:** P0 – Projektbasis und technische Verifikation.
 - **Milestone:** M0 – Projekt läuft; Zulauf R0.
-- **Status:** READY – 20.09.2026; E01 erfüllt, E02a vorläufig gewählt, P0-01 ACCEPTED. Kein automatischer Arbeitsbeginn; konkreter Auftrag steht aus.
+- **Status:** ACCEPTED – 20.09.2026, nach manuellem Godot-Test durch den Project Lead angenommen; Befund siehe „Befund / Abnahme“ unten. M0 bleibt bis R0 (P0-05) offen.
 - **Verantwortliche Rolle:** Claude Code / Opus 5.0.
 - **Priorität:** Hoch.
 - **Ziel:** Ein kleines wirklich startbares Projekt ohne vorgezogene Systemarchitektur schaffen.
@@ -163,7 +163,7 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Ausdrücklich verbotene Änderungen:** V1; kein `vertical_slice.tscn` als Produktlevel, kein Player, SaveService, Inventory, Creature, Navigation oder unbenutzte UI-Paneele. Keine zweite Sandbox-/Testflow-Steuerung und keine dauerhaft global vorgeladene Welt.
 - **Konkrete Arbeit:** 1. `game/` als Projektroot mit bestätigter Engine und temporärem Rendererprofil anlegen. 2. Dauerhafte Main-Szene mit WorldHost und GameUI verbinden. 3. Nur nötige Menü-/Fehleransicht und Entwicklungsstart/Rückkehr/Beenden erstellen. 4. Eine primitive Sandbox mit fixer Testkamera bereitstellen; ihr Root verwendet den minimal benötigten gemeinsamen Levelvertrag, spätere Teilnehmer bleiben optional. 5. MENU/PREPARING/PLAYING und kontrollierten Abbau für diese Ausbaustufe umsetzen: genau eine Welt, Freigabe erst nach bereitem Aufbau, UI-Referenzen vor Abbau lösen. Keine noch funktionslosen Systeme für spätere Phasen anlegen.
 - **Nicht-Ziele:** Movement, vollständige Menügestaltung, sämtliche Main-Phasen, Snapshot-/Neustartfunktion, Produktinhalt oder Rendereroptimierung.
-- **Acceptance Criteria:** Projekt öffnet und startet fehlerfrei; Menü → Sandbox → Menü lässt sich wiederholen. Unter WorldHost existiert höchstens eine Welt; UI bleibt erhalten. Main/Level erfüllen ihre Besitzgrenzen ohne Autoload. Aufbau/Abbau erzeugt keine alten Referenzzugriffe. Die Testkamera ist die einzige aktive Weltkamera. Sandboxzugang ist als Entwicklungsfunktion begrenzt; keine Savefunktion oder Produktwelt behauptet.
+- **Acceptance Criteria:** Projekt öffnet und startet fehlerfrei; Menü → Sandbox → Menü lässt sich wiederholen. Unter WorldHost existiert höchstens eine Welt; UI bleibt erhalten. Main/Level erfüllen ihre Besitzgrenzen ohne Autoload. Aufbau/Abbau erzeugt keine alten Referenzzugriffe. Die Testkamera ist die einzige aktive Weltkamera. Sandboxzugang ist als Entwicklungsfunktion begrenzt; keine Savefunktion oder Produktwelt behauptet. **Erfüllt (20.09.2026):** Start/Öffnen, wiederholter Weltwechsel, höchstens eine Welt, erhaltene UI, Besitzgrenzen ohne Autoload, keine alten Referenzzugriffe, einzige aktive Testkamera und begrenzter Sandboxzugang sind durch Headless-Test und manuellen Godot-Test belegt (siehe „Befund / Abnahme“).
 - **Auszuführende Tests:** Verfügbare Godot-CLI-Import-/Parserprüfung und begrenzter Starttest; mehrfacher Weltwechsel mit Prüfung von Instanzen/Fehlerausgabe, ungültige benötigte Referenz diagnostizieren und Teständerung zurücknehmen; SR/Git-Prüfung. Keine KI-/Navbereitschaft erfinden, solange keine Navigation existiert.
 - **Erforderlicher Godot-Test:** Projekt im Editor öffnen; Menü, Sandbox, Rückkehr und Beenden praktisch bedienen; wiederholten Aufbau im Remote Scene Tree kontrollieren.
 - **Windows-Exporttest:** Folgt verbindlich in P0-04; Editorstart nicht als Standalone-Nachweis verbuchen.
@@ -173,6 +173,14 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Astra-Review:** Gate R0 in P0-05, gemeinsam mit P0-01/03/04.
 - **Junior-Test:** Optional Start/Beenden zeigen; kein formaler Abnahmetest.
 - **Blocker / offene Entscheidung:** E01/E02a; bei Problemen nur betroffenen Aufbau diagnostizieren. Kein Rückfall auf ungeprüften Renderer oder andere Engine.
+- **Befund / Abnahme (D1, 20.09.2026):**
+  - **Stand:** Basis-Commit `3a1c2fa`; ungecommitteter Diff = neue Dateien `game/project.godot`, `game/app/main.gd` (+`.uid`), `game/app/main.tscn`, `game/ui/game_ui.gd` (+`.uid`), `game/ui/game_ui.tscn`, `game/levels/vertical_slice/vertical_slice.gd` (+`.uid`), `game/tests/systems_sandbox.tscn`. Keine versionierte Datei geändert; `game/.godot/` ignoriert.
+  - **Engine/Profil:** `C:\GameDev\Godot\4.7.2\Godot_v4.7.2-stable_win64.exe` (`4.7.2.stable.official.ed1daf0bf`); Mobile + Vulkan, Viewport 1920×1080 (E02a). Laufzeitlog: `Vulkan 1.4.323 – Forward Mobile – Intel(R) Graphics`.
+  - **Aufbau:** Main (Node, ALWAYS, `main.gd`) → WorldHost (Node3D, PAUSABLE) + GameUI (CanvasLayer, ALWAYS). Phasen MENU/PREPARING/PLAYING, Laufgeneration pro Weltwechsel, Abbau mit `unbind_world` und abgewarteter Freigabe vor jedem Neuaufbau. Sandbox-Root nutzt den gemeinsamen Levelvertrag `vertical_slice.gd` (`prepare_world`, `set_gameplay_active`). Keine Autoloads. Sandboxzugang nur bei `OS.is_debug_build()` (Debug-/Release-Grenze wird in P0-04 festgelegt).
+  - **CLI-/Headless-Tests (Claude, bestanden):** `--check-only` aller Skripte, `--headless --import` fehlerfrei; temporärer Headless-Laufzeittest außerhalb des Repos mit 122/122 bestandenen Prüfungen (5× Menü → Sandbox → Menü, genau eine Welt, Laufgeneration, UI-Bindung/-Lösung, genau eine aktive Kamera, Freigabe alter Welt, Sperre während PREPARING, Fehlerpfade fehlende Szene/ungültige Kamerareferenz mit Rückkehr ins Menü; Teständerung zurückgenommen). Fensterstart und Editorstart mit der festen EXE je 15 s fehlerfrei.
+  - **Manueller Godot-Runtime-Test (Project Lead, 20.09.2026, bestanden):** Projekt startet mit F5; Hauptmenü funktioniert; Systems Sandbox lässt sich öffnen; 3D-Sandbox wird korrekt dargestellt; Rückkehr zum Menü funktioniert; keine sichtbaren Laufzeitfehler. Ergebnis: bestanden.
+  - **Nicht ausgeführt / noch nicht anwendbar:** Windows-Export (P0-04); Pause/Fokus/Mausmodus (P0-03). Bekannte Grenzen: kein „Neues Spiel“ ohne Produktlevel; 1920×1080-Fenster überragt auf dem 1080p-Panel leicht den Bildschirm (Fenstermodus nicht Teil von P0-02).
+  - Kein Commit; Bündelung mit P0-03/04 zum Bootstrap-Integrationsstand gemäß G1.
 
 ### P0-03 – Input-, Pause- und Fokus-Grundverhalten
 
@@ -180,7 +188,7 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Titel:** Eingabeaktionen und sicheren Menü-/Pausenwechsel vorbereiten.
 - **Phase:** P0 – Projektbasis und technische Verifikation.
 - **Milestone:** M0 – Projekt läuft; Zulauf R0.
-- **Status:** PLANNED.
+- **Status:** GATE_OPEN – 20.09.2026; P0-02 ist ACCEPTED, es fehlt noch die vorläufige Bestätigung des E03-Teils „Bedienung“ (Testbelegung Pause, Regel bei Fokusverlust/-rückkehr) durch Project Lead/Autoren. Nach diesem Beleg READY.
 - **Verantwortliche Rolle:** Claude Code / Opus 5.0.
 - **Priorität:** Hoch.
 - **Ziel:** Eine verlässliche Eingabe- und Pausenbasis für den anschließenden Player bereitstellen.

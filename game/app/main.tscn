@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://b2as2xsolooqw"]
+
+[ext_resource type="Script" uid="uid://bj8hw7q1pqucd" path="res://app/main.gd" id="1_main"]
+[ext_resource type="PackedScene" uid="uid://dnfepi14wg4gk" path="res://ui/game_ui.tscn" id="2_game_ui"]
+
+[node name="Main" type="Node"]
+process_mode = 3
+script = ExtResource("1_main")
+
+[node name="WorldHost" type="Node3D" parent="."]
+process_mode = 1
+
+[node name="GameUI" parent="." instance=ExtResource("2_game_ui")]
+process_mode = 3
