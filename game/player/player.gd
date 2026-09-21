@@ -93,10 +93,16 @@ func prepare() -> bool:
 
 ## Einziger Freigabeauftrag (vom Level weitergereicht). Sperren unterbricht die
 ## Verarbeitung, setzt aber keinen Bewegungszustand zurück (Pause friert ein).
+## Beim Freigeben wird der eingefrorene Horizontalimpuls verworfen: Nach dem
+## Fortsetzen entsteht Bewegung erst wieder aus neuer Eingabe (kein Nachlauf).
+## Vertikale Geschwindigkeit (Sprung/Fall), Haltung und ein laufendes
+## Traversal bleiben erhalten und werden konsistent fortgesetzt.
 func set_gameplay_active(active: bool) -> void:
 	_gameplay_active = active
 	if active:
 		_look_suppress_frames = LOOK_SUPPRESS_FRAMES
+		velocity.x = 0.0
+		velocity.z = 0.0
 		# Nach Freigabe (Start, Fortsetzen) beginnt die Schrittstrecke neu:
 		# kein nachgeholter Schritt oder Landungsimpuls aus der Zeit davor.
 		_reset_footstep_tracking()
