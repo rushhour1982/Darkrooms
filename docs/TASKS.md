@@ -530,7 +530,7 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Titel:** Ein gebündelter Senior-Review R1 des vollständigen Player-Prototyps.
 - **Phase:** P1 – First-Person-Spielgefühl.
 - **Milestone:** M1 – Bewegung macht den Raum spielbar; Abschlussgate R1.
-- **Status:** READY – 21.09.2026; Voraussetzungen erfüllt: P1-01 bis P1-05 ACCEPTED mit SR-Nachweisen und Systemtests, J1 durchgeführt und ACCEPTED, E03/E12a-Belege dokumentiert, Übergabestand fixiert (Basis `be904dc` plus abgegrenzter Diff `game/player/player.gd`, Prüfpaket unter P1-05 „Befund / Abnahme“); keine konkurrierende Implementierung. Kein automatischer Reviewbeginn; konkreter Astra-Auftrag steht aus.
+- **Status:** ACCEPTED – 21.09.2026, auf Basis des R1-Senior-Reviews durch Codex / Astra High vom 21.09.2026, vom Project Lead übernommen; Befund siehe „R1-Befund / Abnahme“ unten. **M1 ist damit gemäß §2 („M0/M1 sind erst nach R0/R1 abgenommen“) ACCEPTED; der P1-Movement-Block (P1-01 bis P1-06) ist abgeschlossen. Der nächste Entwicklungsblock darf beginnen** (Detailplanung P2 gemäß §7 nach Auswertung der P1-Ergebnisse).
 - **Verantwortliche Rolle:** Codex / Astra High für Review; Project Lead und Spielautoren für M1-Abnahme, Claude für eindeutig zugewiesene normale Korrekturen.
 - **Priorität:** Hoch; vor davon abhängiger weiterer Systemplanung.
 - **Ziel:** Kritische Bewegungs-, Kollisions-, Eingabe- und Lebensdauergrenzen des zusammenhängenden Stands prüfen.
@@ -552,6 +552,19 @@ Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Prof
 - **Astra-Review:** Ja – **R1 selbst**, einmal gebündelt für P1-01 bis P1-05 am Ende P1.
 - **Junior-Test:** J1 muss vorher vorliegen; erneute gezielte Probe nur bei relevant verändertem Gefühl/Bedienung oder offenem Befund.
 - **Blocker / offene Entscheidung:** Blockierende R1-Befunde oder fehlende Runtime-/J1-Nachweise halten M1 offen. Restore ist erst P5 nachweisbar; das ist eine spätere Pflichtprüfung, kein Anlass zum Scopeausbau in P1.
+- **R1-Befund / Abnahme (D1, 21.09.2026, Review Codex / Astra High; Übernahme Project Lead):**
+  - **Stand:** Reviewgrundlage P1-Integrationsstand (Basis `be904dc` plus P1-05-Diff), inzwischen als P1-Integrationspunkt `5371cf4` „Complete P1 movement integration and J1 acceptance“ committet. R1-Korrekturen liegen als abgegrenzter, ungecommitteter Diff auf `5371cf4` vor: geändert `game/player/player.gd`, `game/export_presets.cfg`; neu `game/tests/p1_movement_regression.gd` (+`.uid`). Commit nur bei ausdrücklicher Freigabe (G1).
+  - **Gesamturteil:** P1-Architektur tragfähig; klare Main-/Level-/Player-Verantwortung; genau ein Positionsschreiber; keine unnötigen globalen Systeme; Architektur für den nächsten Entwicklungsblock geeignet.
+  - **Blocker:** keine.
+  - **Important (in R1 behoben):** 1. falsche Bewegungsrichtung unter gedrehten Levelknoten (Bewegungsbasis war knotenlokal statt weltbezogen); 2. unerwünschter Schrittton beim Ducken aus vollständigem Stillstand (alter Schrittstreckenrest wurde bei kleinerer Schwelle nachgeholt).
+  - **Minor:** Debug-Ressourcen aus dem Release ausgeschlossen; historische P1-Testskripte liegen teilweise nur in ignorierten Exportartefakten (`exports/p1/p1-05-tests/`); zwei alte P1-01-Erwartungen („`sprint`/`crouch` ungebunden“) sind historisch/veraltet und in einer aktualisierten Testkopie korrigiert.
+  - **R1-Korrekturen:** weltbezogene Bewegungsbasis korrigiert (`global_transform.basis` statt `transform.basis` für die Eingaberichtung); überfällige Schrittstreckenreste im Stand verworfen; Release-Filter um `debug/*` ergänzt (`exclude_filter="tests/*,debug/*"`); neue gezielte P1-Movement-Regression `game/tests/p1_movement_regression.gd` ergänzt.
+  - **Testergebnisse (nach den R1-Korrekturen, bestanden):** P1-02 61/61; P1-03 49/49; P1-04 49/49; P1-05-Integrationstest 242/242 headless, 243/243 Fenster; Resume-Regression 44/44; R0-Regression 55/55 headless bzw. 63/63 Windows; neue R1-Regression 8/8; aktualisierte P1-01-Testkopie 64/64; Import, Export, Paketprüfung und Standalone-Starts bestanden.
+  - **Pause/Resume (geprüfter Vertrag):** x/z-Impuls wird beim Resume verworfen; y bleibt erhalten; Traversal wird kontrolliert fortgesetzt; Schritttracking wird zurückgesetzt; Blicksperre bleibt erhalten.
+  - **Traversal:** für P1 angemessen und wartbar; Körperbewegung bleibt ausschließlich im Player; Marker bleiben bewusste Levelbau-Voraussetzung.
+  - **Audio/Debug:** Audio und Diagnose besitzen keinen Movement-State; Release enthält weder `tests/` noch `debug/`; temporärer Player-Testton (E12a) bleibt vorläufig enthalten.
+  - **Verbleibende Risiken (spätere Phasen, blockieren P1 nicht):** Tod/Tempo (P3), KI-Audio (P4), Restore (P5), reale Geometrie (P7), Langzeit-Leakprüfung; siehe §6 „Verbindliche spätere Nachprüfungen“.
+  - **Abnahme:** R1 / P1-06 ACCEPTED; M1 ACCEPTED (R0 und R1 liegen vor, J1 bewertet, keine offenen blockierenden Movement-/Kollisions-/Lebensdauerfehler); P1-Movement-Block abgeschlossen; nächster Entwicklungsblock darf beginnen.
 
 ## 6. Verbindliche spätere Nachprüfungen
 

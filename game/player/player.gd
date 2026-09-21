@@ -195,7 +195,7 @@ func _physics_process(delta: float) -> void:
 	var input_dir: Vector2 = Input.get_vector(ACTION_LEFT, ACTION_RIGHT, ACTION_FORWARD, ACTION_BACKWARD)
 	var wish_dir: Vector3 = Vector3.ZERO
 	if input_dir != Vector2.ZERO:
-		wish_dir = (transform.basis * Vector3(input_dir.x, 0.0, input_dir.y))
+		wish_dir = (global_transform.basis * Vector3(input_dir.x, 0.0, input_dir.y))
 		wish_dir.y = 0.0
 		wish_dir = wish_dir.normalized() * minf(input_dir.length(), 1.0)
 
@@ -378,7 +378,11 @@ func _update_movement_audio(fall_speed_before_move: float) -> void:
 				return
 			_step_accumulator += distance
 			var threshold: float = get_footstep_threshold()
-			if _step_accumulator >= threshold:
+			# Eine kleinere Schwelle nach Haltungs-/Sprintwechsel darf einen
+			# alten Streckenrest weder im Stand noch beim Wiederanlaufen nachholen.
+			if distance == 0.0 and _step_accumulator >= threshold:
+				_step_accumulator = 0.0
+			elif _step_accumulator >= threshold:
 				# Höchstens ein Schritt pro Tick; Rest bleibt unter der Schwelle.
 				_step_accumulator = minf(_step_accumulator - threshold, threshold * 0.5)
 				_play_footstep()
