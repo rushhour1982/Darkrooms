@@ -1,12 +1,14 @@
 # Dark Rooms – Operative Aufgabenplanung
 
-**Version:** 0.1 · **Stand:** 20.09.2026 · **Status:** Erste Aufgabenplanung; keine Implementierung, Tests oder Reviews ausgeführt.
+**Version:** 0.2 · **Stand:** 21.09.2026 · **Status:** P0/M0 und P1/M1 abgeschlossen (R0, J1, R1); P2 detailliert geplant, noch nicht beauftragt. Ursprung 0.1 vom 20.09.2026: erste Aufgabenplanung ohne Implementierung.
 
 ## 1. Grundlage und Reichweite
 
 Verbindliche Grundlage sind AGENTS.md, CLAUDE.md, [GAME_DESIGN.md](GAME_DESIGN.md), [TECHNICAL_DESIGN.md](TECHNICAL_DESIGN.md) 0.2, [DECISIONS.md](DECISIONS.md), [ARCHITECTURE.md](ARCHITECTURE.md) 0.2 und [ROADMAP.md](ROADMAP.md) 0.2 sowie der aktuelle Planungsauftrag. Kürzel: **GDD**, **TDD**, **ADR**, **Architektur**, **Roadmap**. Abschnittsnummern beziehen sich auf diese Fassungen. Neuere angenommene ADRs konkretisieren ältere Offen-Markierungen nur in ihrem ausdrücklich beschlossenen Umfang.
 
 Detailliert werden ausschließlich **P0 / M0** und **P1 / M1**: fünf P0-Tasks und sechs P1-Tasks einschließlich ihrer Review-/Abnahmearbeit. Davon sind jeweils vier Claude-Arbeitspakete, ergänzt um R0 beziehungsweise J1-Abnahme und R1. P2–P12 bleiben zukünftige Taskgruppen. Diese Planung beauftragt noch keine Durchführung und startet keine Agenten.
+
+**Fortschreibung 0.2 (21.09.2026):** Nach Abnahme von P0/P1 (R0, J1, R1, M0/M1) wurde gemäß §8 „Vor P2 zuerst P0-/P1-Ergebnisse, R0/R1 und offene Gates auswerten“ die **Detailplanung P2 / M2-Zwischenstand** in §7 ergänzt: acht P2-Tasks (P2-01 bis P2-08) einschließlich J2. P3–P12 bleiben zukünftige Taskgruppen (§8). Auch diese Fortschreibung beauftragt keine Durchführung.
 
 **Bestand bei Planung:** Unter `game/` liegt nur `.gitkeep`; es gibt noch kein `project.godot`, keine Szenen oder Scripts. Genannte Runtime-Pfade sind deshalb geplante, bedarfsweise Dateien. Bereits vorhandene Änderungen an den fünf fachlichen Planungsdokumenten gehören zum vorgefundenen Stand und werden nicht überschrieben. Der aktuelle Auftrag verändert ausschließlich `docs/TASKS.md`; keine Implementierung, Godot-Imports, Downloads, Assets oder Commits.
 
@@ -76,6 +78,7 @@ Vor Beginn Basis-Commit und vorhandene Änderungen erfassen. Nur sachlich zum Au
 | --- | --- |
 | P0-01 bis P0-04 geprüft, Editor-/Exportnachweis vorhanden | `Bootstrap Dark Rooms Godot project` |
 | P1-01 bis P1-05 geprüft, vollständige Bewegung und J1 bewertet | `Implement first person player prototype` |
+| P2-01 bis P2-08 geprüft, E04-Kopplungsbefund und J2 bewertet (Roadmap §10 „P2 / M2-Zwischenstand“) | `Implement interaction, inventory core and door navigation probe` |
 
 Kleine zusammengehörige Tasks dürfen bis zu diesen Integrationsständen ungecommittet bleiben. Ein ausdrücklich erlaubter getesteter Übergabecommit darf vor R0/R1 liegen; er bedeutet noch keine Milestone-Abnahme. Alternativ nach Review und Nachtests committen. Der konkrete Auftrag bestimmt den Zeitpunkt. Ohne Commit wird Basis plus klar abgegrenzter Diff übergeben. Während Astra den Stand prüft, implementiert Claude nicht gleichzeitig denselben Umfang. Normale Reviewbefunde gehen mit klarer Zuständigkeit an Claude; Astra korrigiert nur in einem gesonderten gezielten Auftrag.
 
@@ -94,6 +97,7 @@ Kleine zusammengehörige Tasks dürfen bis zu diesen Integrationsständen ungeco
 | 9 | P1-04 – Testschritte und Movement-Diagnose | Hörbare echte Schritte und vollständige Bewegungsanzeige | R1 |
 | 10 | P1-05 – Integrierter Movement-Test und J1 | Geprüfter vollständiger P1-Stand und Autorenfeedback | R1 |
 | 11 | P1-06 – R1: Player / Movement prüfen | M1-Abnahmeempfehlung und spätere Regressionen | R1 selbst |
+| 12–19 | P2-01 bis P2-08 (Detailplanung 21.09.2026) | Siehe §7 „Reihenfolge, Gates und nächster Auftrag in P2“ | J2; kein reguläres Astra-Gate, R2 erst Ende P4 |
 
 Nach P1-01 direkt eine kurze freiwillige Junior-Probe ermöglichen; nicht auf Sprint, Ducken, Traversal oder Footsteps warten. Sie ersetzt J1 nicht und ist kein zusätzlicher formaler Freigabestopp. Kritische technische Fehler werden vor weiterer Nutzung behoben. Neue Spielideen aus Feedback gehen an den Project Lead und die Autoren.
 
@@ -104,7 +108,12 @@ Nach P1-01 direkt eine kurze freiwillige Junior-Probe ermöglichen; nicht auf Sp
 | E03, zunächst Bedienung | Testbelegung für Pause und Regel bei Fokusverlust/-rückkehr | Vor P0-03 den benötigten Teil mit Project Lead/Autoren vorläufig bestätigen; keine neue Gate-ID. **Beleg 20.09.2026 (E03a, Project Lead, vorläufig für 0.1):** Escape toggelt Pause im aktiven Gameplay und setzt aus der Pause fort; im Menü/außerhalb des Gameplays löst Escape keine Fortsetzung aus. Fokusverlust im Gameplay pausiert automatisch; Fokusrückkehr setzt nicht automatisch fort, Fortsetzen nur bewusst durch den Spieler. Maus im aktiven First-Person-Gameplay später gefangen, im Menü und in der Pause sichtbar und frei; P0-03 bereitet diese Lebenszyklus-/Mauslogik vor und prüft sie in der Sandbox. Eingabe über Godot Input Actions, keine fest verdrahteten Tastencodes, kein Input-Manager/Event-Bus. Details bei P0-03 „E03a-Beleg“. |
 | E03, Bewegung | Kamera/FOV/Empfindlichkeit/Blickgrenzen, Körpermaße, Geschwindigkeiten, Beschleunigen/Bremsen, Gravity, Sprung-/Luft-/Steigungsgrenzen und Bedienung | Vor P1-01 das benötigte vorläufige Profil freigeben. Sprint-/Duckkombinationen und Traversalauslösung/-grenzen spätestens vor P1-02/03 ergänzen. Bis J1/R1 reproduzierbare Befunde; keine finalen Raum-/Fluchtmaße. **Beleg 20.09.2026 (E03 Bewegung, Project Lead, vorläufiges Prototyp-Profil):** First Person, FOV 75°, Spielerhöhe ca. 1,80 m, Augenhöhe ca. 1,65 m, Capsule-Collision, Gehen 5,0 m/s, Sprint 8,0 m/s (erst P1-02), Bodenbeschleunigung 20 m/s², Bodenabbremsung 24 m/s², Schwerkraft ca. 9,8 m/s², Sprunghöhe ca. 1,25 m, reduzierte Luftsteuerung, Maus-Sensitivität als Tuningwert, keine Ausdauer, kein Head Bob, keine Kameraneigung; alle Werte vorläufig bis zum ersten Junior-Playtest. Details bei P1-01 „E03-Beleg“. **Nachtrag 20.09.2026 (E03 Sprint/Crouch, Project Lead, vorläufig):** Sprint linke Shift halten, 8,0 m/s, keine Ausdauer, nicht geduckt, Sprung aus Sprint mit erhaltenem Horizontalimpuls erlaubt; Crouch linke Strg halten, 2,5 m/s, Körper 1,80 → 1,20 m, Augen 1,65 → 1,05 m, kurzer weicher Übergang, Aufstehen nur bei freiem Raum, sonst geduckt bleiben; kein Crouch-Jump, Slide oder Prone. Details bei P1-02 „E03-Nachtrag“. **Nachtrag 20.09.2026 (E03 Traversal, Project Lead, vorläufig):** nur klar geeignete niedrige Hindernisse, automatische Erkennung vor dem Spieler ohne zusätzliche Taste, max. Hindernishöhe ca. 0,9 m, Erkennungsreichweite ca. 1,1 m, nur bei freiem Raum oberhalb/auf der Zielseite, kontrollierte Bewegung zur Zielposition ohne WASD währenddessen, First-Person-Kamera bleibt; kein Wallrun, Ledge-Grabbing, Vault-System, Durchqueren geschlossener Geometrie, keine Ausdauer. Details bei P1-03 „E03-Nachtrag Traversal“. **Nachtrag 20.09.2026 (E03 Schritte, Project Lead, vorläufig):** Schritt je 0,70 m (Gehen) / 0,90 m (Sprint) / 0,50 m (Ducken) zurückgelegter Bodenstrecke; nur bei Bodenkontakt und tatsächlicher horizontaler Bewegung, nicht im Stand, in der Luft, im Traversal oder nachgeholt nach Pause; Sprint ca. +2 dB, Ducken ca. −4 dB gegenüber Gehen; Tonhöhe ±3 % zufällig; separater Landungsimpuls nur nach relevantem Fall mit technisch gewähltem, im Junior-Test abzustimmendem Schwellenwert; kein Traversal-Sound; keine Oberflächen, kein finales Sounddesign. Details bei P1-04 „E03-Nachtrag Schritte“. |
 | E12a | Kleine bekannte Testtonquelle, erlaubte Lautstärke, Hörgerät und benötigtes Testimportprofil | Vor P1-04 bestätigen; kein Blocker für den stillen frühen P1-01-Test. Keine finale Soundbibliothek. **Beleg 20.09.2026 (Project Lead, vorläufig):** projektintern erzeugter neutraler kurzer Footstep-/Impulston (keine externe Quelle/Lizenz, nur P1-04-Diagnose, später durch echte Footsteps ersetzt); WAV mono 44,1/48 kHz 16 Bit PCM, ca. 80–150 ms, Peak ca. −6 dBFS, ohne Kompression/Effekte; Laptop-Lautsprecher oder normale Kopfhörer bei moderater Lautstärke; Godot-Import unverändert, kein Streaming, keine Plugins/Zusatzarchitektur; nur technischer Testbeleg, keine Footstep-Bibliothek, Oberflächenvariation, Mixing oder 3D-Audio-Design. Details bei P1-04 „E12a-Beleg“. |
-| E02b, E18, E21 | Regulärer Renderer, Ressourcenbudgets, unterstütztes Windows-/Paketprofil | Offen lassen: P0 bereitet Vergleich/Messung vor; E02b spätestens vor P3 beziehungsweise regulärer Grafikarbeit, E18 vor größerem Ausbau P7, E21 vor P12. |
+| E02b, E18, E21 | Regulärer Renderer, Ressourcenbudgets, unterstütztes Windows-/Paketprofil | Offen lassen: P0 bereitet Vergleich/Messung vor; E02b spätestens vor P3 beziehungsweise regulärer Grafikarbeit, E18 vor größerem Ausbau P7, E21 vor P12. **P2-07 liefert den E02b-Messbefund; Entscheidung durch Project Lead vor P3.** |
+| E04, zunächst Bedienung (P2-01) | Vorläufiges Interaktionsprofil: Belegung `interact` (GDD-Vorschlag `E`), Drücken statt Halten, Reichweite, Zielwahl per Kamera-Ray, Hinweistext-/Ablehnungsform | Vor P2-01 mit Project Lead/Autoren vorläufig bestätigen; keine neue Gate-ID (analog E03a). **Offen (21.09.2026).** |
+| E04, Türreaktion und Kopplung | Testregel Blockadereaktion (Architekturempfehlung §10) und Türmaße für den Test vor P2-03; erfolgreicher Kopplungsnachweis Navmesh-Lücke + Link + Tür aus P2-06 vor P4 | Vor P2-03 bestätigen; Nachweis ist Ergebnis von P2-06. **Offen (21.09.2026).** |
+| E05 | Vorläufige Kapazität, Stapeln/Stackgrenze, Aufnahmebedienung, Schutzregel kritischer Gegenstände (reservierte Kapazität oder getrennte Verwaltung), kein Abwerfen | Vor P2-04 bestätigen; Werte als Tuning ausweisen. **Offen (21.09.2026).** |
+| E06 | Öffnen/Schließen der Leseansicht, Weltpause beim Lesen, Verhältnis zur Escape-Pause | Vor P2-05 bestätigen; Inventaransicht erst P3. **Offen (21.09.2026).** |
+| E13a | Maßstab und kleiner Importversuch | Nur falls P2-07 ein externes Testasset verwenden soll; Primitive benötigen keine Freigabe. **Offen, nicht zwingend.** |
 
 Ein Gatebeleg nennt Entscheidung/Nachweis, Datum, verantwortliche Freigabe, Profil und Grenzen. Die Tabelle behauptet keine erfolgte Auswahl. Zahlen und Halten-/Umschaltregeln werden hier nicht erfunden. Offene spätere Gates verhindern nur die jeweils abhängige Arbeit; E04–E11 und Inhaltsgates sind keine Voraussetzung für eine neutrale P1-Teststrecke.
 
@@ -577,13 +586,298 @@ Diese Verweise sind keine zusätzlichen Mikroaufgaben und keine bereits bestande
 | Audio und Debug aus P1 | P4 echte Trennung hörbarer Ausgabe und KI-Geräusch; P5 keine historischen Schritte/alten Quellen beim Restore; P9 Mix ohne Regeländerung; P12 Releaseisolation. |
 | Vorläufige Hardware-/Rendererbefunde | Aussagekräftiger Vergleich für E02b in P0–P2, spätestens vor P3-Grafik-/Lampenabstimmung; repräsentative Messung/E18 vor größerem Ausbau P7. |
 
-## 7. P2–P12 – Nur zukünftige Taskgruppen
+## 7. P2 – Interaktion, echter Besitz und Tür-/Navigationsprobe
 
-**Wird detailliert, sobald vorherige Phase reale Befunde geliefert hat.** Es werden hier keine späteren Einzel-Task-IDs, Dateifreigaben oder Ausführungsaufträge vergeben. Vor P2 zuerst P0-/P1-Ergebnisse, R0/R1 und offene Gates auswerten; weitere Phasen entsprechend fortschreiben. Quellen sind die gleichnamigen Phasen in Roadmap §5 und ihre Gates in §6.
+**Detailplanung nach Auswertung P1 (21.09.2026).** Grundlage: Roadmap §5/P2 (M2), §6 (E02b, E04, E05, E06, E13a), §7 „Tür + Navigation“, §8/J2, §10 (Integrationspunkt „P2 / M2-Zwischenstand“), §11–13; GDD §§15, 19, 23, 28, 30.2–30.3, 32 (O-11, O-15, O-17); TDD §§8, 9, 20, 21, 23, 26.2/AC-06/07/13/21, 26.4, 30 (T-04/T-06/T-09/T-15); Architektur §§6, 9–11, 13–14 (nur Verträge), 17, 20, 24–26, 28–29, 34; ADR-002/003/004. Diese Planung beauftragt keine Durchführung, erzeugt keine Szenen/Assets und ändert keine anderen Dokumente.
+
+### Auswertung P1 als bestätigte Grundlage
+
+- **Bestand (Commit `5360684`):** Main-Lebensdauer ohne Autoloads mit Phasen MENU/PREPARING/PLAYING/PAUSED, Pause/Fokus (E03a), Debug-/Release-Grenze (`tests/*`, `debug/*` nur im Debug-Export); Levelvertrag `vertical_slice.gd` (`prepare_world`, `set_gameplay_active`, optionaler `player`, `world_camera`); First-Person-Player (`player.gd` einziger Positionsschreiber, WASD/Mausblick/Sprung/Sprint/Crouch/markerbasiertes Traversal/Footsteps/Landung, Tuning in `player_tuning.tres`); `TraversalMarker`; Systems Sandbox mit Primitiven; `DebugOverlay` (lesend, F3); Regressionen `tests/p0_lifecycle_regression.gd`, `tests/p1_movement_regression.gd`. Input-Actions `interact`, `flashlight`, `inventory`, `use_item` existieren ungebunden.
+- **Abgenommen:** P0/M0 (R0), P1-01 bis P1-06, J1, R1, M1. Movement-Werte sind bestätigte Baseline und werden in P2 nicht ohne konkreten Befund verändert. R1: Architektur für den nächsten Block tragfähig; Marker bleiben bewusste Levelbau-Voraussetzung; Audio/Debug ohne Movement-State.
+- **Offene spätere Nachprüfungen** bleiben gemäß §6 (Tod/Tempo P3, KI-Audio P4, Restore P5, reale Geometrie P7, Langzeit-Leakprüfung).
+
+### Fachliches Ziel, Milestone und Systeme von P2
+
+| Feld | Aus den Dokumenten ermittelt |
+| --- | --- |
+| Ziel (Roadmap §5/P2) | Sichtbare Weltreaktionen ermöglichen und die kritische Tür-/Navmesh-Kopplung prüfen, bevor Räume oder Verfolgung davon abhängen. |
+| Milestone | **M2 – Interaktive Survival-Sandbox** (P2–P3); P2 liefert den Zwischenstand „Interaktion, echte Aufnahmen und Türprobe“ (Roadmap §10), M2 wird erst mit P3 erreicht. |
+| Definierte Systeme | Interactor/Interactable, Türen, Schalter, Pickups, neutraler Testhinweis, stabile IDs und erste Levelvalidierung, kleinster Inventory-/ItemDefinition-Kern (Aufnahme ändert Bestand und Weltfund gemeinsam; einfache Bestandsrückmeldung), früher Risikoprototyp Creature-Körper/NavigationAgent zu festen neutralen Testzielen mit Türblatt, Navmesh-Lücke und zugewiesenem Link, kleine Licht-/Material-/Taschenlampenprobe für E02b. |
+| Abhängigkeiten | P1 (erfüllt); E04 für Türreaktion/Testaufbau, E05 für Bestands-/kritische Itemregeln, E06 für Hinweis-/Bestandsansicht, E13a nur bei externer Importprobe, E02b-Befund vor P3. |
+| Bezug Game Design | GDD §15 (Türen, Schalter, Aufnahme, einheitlicher Interaktionshinweis, Ablehnung nachvollziehbar), §19 (kleines Inventar, kritische Gegenstände ohne Softlock), §28 (Belegungsvorschlag `E` für Interagieren), §30.3 „Interaktion“. |
+| Bezug Architektur | §9 Interactable-Vertrag/Kamera-RayCast/Layerkonvention, §10 Door (Stellung ≠ Verriegelung, AnimatableBody3D-Blatt, Clearance), §11 Inventory/Pickup-Aufnahmeablauf ohne `await`, §17 Navmesh-Lücke + schaltbarer NavigationLink3D nur je dynamischem Durchgang, §24 stabile IDs, §25/§26 Node-Bäume und Dateiverantwortung, §29 eine Sandbox. |
+| Reviews/Tests | Kein reguläres Astra-Gate in P2 (R2 folgt Ende P4). Enger Astra-Auftrag nur bei konkretem Bedarf, insbesondere unzuverlässiger P2-Türkopplung (Roadmap §9). **J2** am Ende von P2. |
+| Nicht in P2 | Inventarbedienung/-ansicht, Flashlight als Spielerfunktion, Tempo-Item, Health/Tod (P3); FSM/Wahrnehmung (P4); Saves (P5); echte Rätsel/Story (P6); eigenes Level/Greybox (P7). |
+
+### Erster echter Levelbau und Greybox-Wunsch (Prüfung anhand der Roadmap)
+
+- **Laut Planung beginnt der erste echte Level-/Environment-Aufbau in P7 / M6** („Eigene Vertical-Slice-Szene … zuerst den gesamten Pflichtweg mit klar lesbarer Rohgeometrie spielbar machen“, Roadmap §5/P7; Placeholder-Tabelle §12: P0–P2 Primitive, P7 „Eigene Rohlevelgeometrie“). Voraussetzungen: P1–P6 mit Befunden, **E16b** (konkreter kleiner Levelplan, Zugänge, Flucht-/Traversalwege), E17 (Speicherorte), E18 (Ressourcenrahmen), E19 (Gestaltung), E12b/E13b (Workflows). Architektur §29 hält bis dahin **eine** Systems Sandbox; eine zweite Testwelt entsteht nur bei nachgewiesener Störung.
+- **Der gewünschte Ablauf Waldweg → Grundstück → Haus außen → Eingang → Flur/erste Räume → Kellerzugang (ca. 5–8 Minuten Greybox)** entspricht inhaltlich dem GDD-Vorschlag „Waldzugang → Gebäude erkunden“ (§30.2, §23), ist aber ein konkreter Raumplan und damit Gegenstand von **O-05/O-15 → E16b** (Autorenentscheidung). Er widerspricht nicht der Roadmap, gehört jedoch **nicht in P2**: P2 baut ausschließlich die Systems Sandbox mit Primitiven aus; Tür-/Navigationsprobe und Interaktion werden dort geprüft. Ein vorgezogener Greybox-Bau wäre eine Scopeänderung nach Roadmap §13 (Änderungsregel) und braucht eine ausdrückliche Entscheidung von Project Lead/Autoren; technisch sinnvoll frühestens nach bestätigtem E04-Kopplungsnachweis (P2-06) und einem freigegebenen E16b-Plan, damit Türbreiten, Navmesh-Abstände, Klettermaße und Anker nicht nachgebaut werden müssen.
+- **In P2 parallel erlaubt (Roadmap §12, ohne Code/Szenen/Assets):** Autorenarbeit am Levelplan-Entwurf für E16b (Abschnitte, Zugänge, Türen als mögliche Kreaturendurchgänge, Traversalstellen, Fluchtweg, optionaler Geheimraum, Richtzeiten) sowie O-05 (Beziehung Wald/Gebäude). Ergebnis ist ein Dokumententwurf für ein gesondertes Änderungs-/Planungsmandat, keine Szene.
+
+### Gemeinsame P2-Regeln (zusätzlich zu §2)
+
+- **Eine Sandbox:** Alle P2-Teststellen entstehen in `game/tests/systems_sandbox.tscn` als abgegrenzter Interaktions-/Navigationsbereich neben der P1-Movement-Strecke; die P1-Strecke bleibt unverändert regressionsfähig. Kein Produktlevel, keine zweite Testwelt.
+- **Level-Vertrag erweitern, nicht ersetzen:** `vertical_slice.gd` bleibt Root-Script beider Welten; neue Teilnehmer (Interactables, Anchors, Navigation, Prüfakteur) sind optional und werden über dieselbe Freigabe `set_gameplay_active` gesperrt/freigegeben.
+- **Verträge vor Inhalt:** Schalter, Hinweis, Testgegenstand und Türen sind neutrale Testmittel; kein Rätsel, keine Story, keine Produktgegenstände, keine Flashlight-/Tempo-Logik. Keine Save-Implementierung; nur Zustände so halten, dass P5 sie später lesen kann (ID, Stellung, eingesammelt).
+- **Tests:** Vorhandene Regressionen (`p0_lifecycle_regression.gd`, `p1_movement_regression.gd`) müssen grün bleiben. Kleine headless-fähige Daten-/Vertragstests dürfen gemäß Architektur §26/§29 in `game/tests/data_checks.gd` entstehen (P2-04); Laufzeit-Smoke-Tests bleiben temporär außerhalb des Repos, Kopien unter `exports/p2/` (unversioniert).
+- **Gates:** Vorläufige Profile (Interaktionsprofil, E04-Testregel, E05, E06) werden vor dem abhängigen Task vom Project Lead bestätigt und beim Task als Beleg eingetragen; keine Zahlen oder Bedienregeln hier erfinden.
+- **Commit:** G1; vorgesehener Integrationspunkt nach P2-08/J2 „Implement interaction, inventory core and door navigation probe“ (Roadmap §10 „P2 / M2-Zwischenstand“), ausschließlich bei ausdrücklicher Freigabe.
+
+### P2-01 – Interaktionsvertrag, Interactor und Testschalter
+
+- **Task-ID:** P2-01.
+- **Titel:** Interactable-Basis, Kamera-Interactor, Interaktionshinweis und erster neutraler Schalter.
+- **Phase:** P2 – Interaktion, echter Besitz und Tür-/Navigationsprobe.
+- **Milestone:** M2; Zulauf J2 und Roadmap-Integrationspunkt P2.
+- **Status:** GATE_OPEN – Interaktionsprofil (siehe Voraussetzungen) vor Beauftragung vorläufig bestätigen; danach READY.
+- **Verantwortliche Rolle:** Claude Code / Opus 5.0; Project Lead bestätigt Profil.
+- **Priorität:** Hoch; Grundlage aller weiteren P2-Tasks.
+- **Ziel:** Ein gültiges Ziel erkennen, die angebotene Handlung anzeigen und genau eine Aktion oder begründete Ablehnung ausführen.
+- **Sichtbares Ergebnis:** Blick auf einen Testschalter zeigt „Betätigen“; `interact` schaltet ihn sichtbar um; hinter einer Wand oder außerhalb der Reichweite passiert nichts.
+- **Voraussetzungen / Gates:** P1 abgeschlossen. **Interaktionsprofil (E04, zunächst Bedienung; keine neue Gate-ID, analog E03a):** Belegung von `interact` (GDD-Vorschlag `E`), Drücken statt Halten, vorläufige Reichweite in Metern, Zielwahl über Kamera-Ray, Hinweistext-Form („Öffnen/Betätigen/Aufnehmen“ + Ablehnungsgrund). Alle Werte vorläufig, als Tuning ausgewiesen.
+- **Relevante Dokumentreferenzen:** GDD §§15, 28; TDD §§8, 18 (nur Hinweis), 26.2/AC-06; Architektur §§8, 9 (Vertrag, RayCast, Layerkonvention), 20 (HUD-Hinweis), 25 „Player“, 26; ADR-002; Roadmap §5/P2.
+- **Zu lesende Bestandsdateien:** AGENTS.md, CLAUDE.md, `game/project.godot`, `game/player/player.gd`/`.tscn`, `game/levels/vertical_slice/vertical_slice.gd`, `game/ui/game_ui.gd`/`.tscn`, `game/tests/systems_sandbox.tscn`, `game/debug/debug_overlay.gd`, P1-Befunde.
+- **Erlaubte Dateien / Verzeichnisse:** neu `game/world/interactable.gd`, `game/player/player_interactor.gd`, `game/world/switch/switch.gd`/`.tscn`; geändert `game/player/player.tscn` (nur `InteractionRay` unter Camera3D, `Interactor`-Node, Kollisionslayer/-maske), `game/player/player.gd` nur für Eingabeweiterleitung/Freigabe an den Interactor (kein Motoreingriff), `game/project.godot` (nur `interact`-Belegung und benannte 3D-Layer `WorldSolid`, `Player`, `Creature`, `Interactable`, `Trigger`), `game/ui/game_ui.gd`/`.tscn` (nur `HUD/InteractionHint`), `game/tests/systems_sandbox.tscn` (Interaktionsbereich mit Wand und Schalter), `game/debug/debug_overlay.gd` (lesende Zeile Ziel/Aktion/Ablehnung); D1/Metadaten.
+- **Ausdrücklich verbotene Änderungen:** V1; keine Aktionslisten/mehrstufigen Fähigkeiten, kein Halten-Interaktionssystem, kein Puzzle, keine Tür/Pickup in diesem Paket, kein Zugriff der Interactables auf Main/UI/Player-Instanz, keine Tuning-/Movementänderung.
+- **Konkrete Arbeit:** 1. `interactable.gd` (Node3D-Basis) mit `persistent_id` (exportierter StringName, in P2-02 validiert), `get_action_info()` (Text, verfügbar, Ablehnungsgrund; ohne Zustandsänderung), `request_interaction()` (erneute lokale Prüfung, genau eine Aktion). 2. `player_interactor.gd`: RayCast3D unter Camera3D mit Area-Erkennung, Player-RID explizit ausgeschlossen, nächster Treffer zuerst (Wand blockiert), Auflösung des Interactable-Vorfahren innerhalb derselben Welt, `force_raycast_update` bei Auslösung, Reichweite aus Tuning, nur bei Gameplayfreigabe. 3. Layerkonvention in `project.godot`; Player auf `Player`, Sandbox-Geometrie auf `WorldSolid`, Schalter-HitArea auf `Interactable`; Bewegungsmaske unverändert wirksam. 4. `switch.gd`: eigenständige Stellung an/aus mit sichtbarer Darstellung (Farbe/Position eines Primitivs), Wiedereintrittssperre gegen doppelte Auslösung im selben Tick. 5. HUD-`InteractionHint` liest den aktuellen Zieltext nur; leer ohne Ziel. 6. Sandboxbereich: Schalter frei, Schalter hinter dünner Wand, Schalter außer Reichweite.
+- **Nicht-Ziele:** Türen, Pickups, Inventar, Hinweislesen, Audio-Rückmeldung (optional neutraler E12a-Testton nur, wenn keine neue Quelle nötig), finale Hinweisgestaltung.
+- **Acceptance Criteria:** Gültiges Ziel vor dem Spieler liefert Hinweis und Aktion; hinter Wand, außerhalb Reichweite und ohne Blick keine Aktion; schnelle Wiederholung wirkt genau einmal je gültigem Zustand; Pause/Fokusverlust und Weltwechsel hinterlassen keinen alten Zielbezug oder gepufferten `interact`; Ray schließt den Player aus und berücksichtigt Areas; P1-Bewegung unverändert (Regressionen grün).
+- **Auszuführende Tests:** Parser/Import; temporärer Laufzeittest headless + Fenster: Treffer/kein Treffer, Wand, Reichweite ± Toleranz, Doppelklick, Pause/Resume mit gehaltener `interact`, Weltwechsel; `p0_lifecycle_regression.gd`, `p1_movement_regression.gd`, P1-Smoke-Kopien.
+- **Erforderlicher Godot-Test:** Editor-Durchlauf mit Blick/Distanz/Wand; Hinweis lesbar; Schalter reagiert sichtbar.
+- **Windows-Exporttest:** Nicht verpflichtend; verbindlich in P2-08.
+- **Claude-Self-Review:** SR 1–9; Schwerpunkt Player-Ausschluss im Ray, keine Zielauflösung über die Weltgrenze hinaus, keine UI-/Main-Abhängigkeit der Interactables, keine Motoränderung.
+- **Erwarteter Bericht:** Interaktionsprofil/Tuningwerte, Layertabelle, getestete Fälle, Grenzen.
+- **Git-/Commitregel:** G1; ungecommittet bis Integrationspunkt P2.
+- **Astra-Review:** Kein eigenes Gate.
+- **Junior-Test:** Optional kurze Probe (Schalter finden und betätigen); formal J2.
+- **Blocker / offene Entscheidung:** Interaktionsprofil; Layernamen sind technische Konvention (Architektur §9), keine Spielregel.
+
+### P2-02 – Stabile IDs und Levelvalidierung
+
+- **Task-ID:** P2-02.
+- **Titel:** `level_id`, `persistent_id`-Verzeichnis und Aufbauprüfung im Levelvertrag.
+- **Phase:** P2.
+- **Milestone:** M2.
+- **Status:** PLANNED – nach P2-01.
+- **Verantwortliche Rolle:** Claude Code / Opus 5.0.
+- **Priorität:** Hoch; Voraussetzung für Türen, Pickups und spätere Saves.
+- **Ziel:** Jede relevante Levelinstanz hat eine eindeutige, geprüfte Identität; Fehler stoppen die Gameplayfreigabe mit Diagnose.
+- **Sichtbares Ergebnis:** Sandbox startet nur mit gültigen IDs; eine absichtlich doppelte ID im Test liefert eine Fehlermeldung mit beiden Node-Pfaden und keine Welt.
+- **Voraussetzungen / Gates:** P2-01 (Interactable mit `persistent_id`). Keine offenen Gates; ID-Format = kleingeschriebenes ASCII ohne Leerzeichen mit Levelpräfix (Architektur §24, technische Konvention).
+- **Relevante Dokumentreferenzen:** TDD §§20, 21 „Level / Save“, 24, 26.2/AC-21, 26.4 „Laufwechsel“; Architektur §§6 (Level), 24, 25 „Anchors“, 27; Roadmap §5/P2 „stabile IDs und erste Levelvalidierung“.
+- **Zu lesende Bestandsdateien:** AGENTS.md, CLAUDE.md, `vertical_slice.gd`, `main.gd` (Fehlerpfad `prepare_world` → `_fail_transition`), `interactable.gd`, `traversal_marker.gd`, Sandbox.
+- **Erlaubte Dateien / Verzeichnisse:** `game/levels/vertical_slice/vertical_slice.gd` (exportierte `level_id`, lokales ID-Verzeichnis beim inaktiven Aufbau, Prüfung leer/doppelt/Format/Typ, Zugriff `get_object_by_id`), `game/world/interactable.gd` (Editorwarnung `_get_configuration_warnings` bei fehlender ID), `game/tests/systems_sandbox.tscn` (IDs vergeben; `Anchors`-Gruppe mit Marker3D-Metadaten-IDs für Start/Test), `game/tests/data_checks.gd` nur falls die ID-Prüfung als reine Datenfunktion testbar gemacht wird; D1/Metadaten.
+- **Ausdrücklich verbotene Änderungen:** V1; kein globales Verzeichnis, kein Autoload, kein Editorplugin, kein UUID-Generator, keine Save-Serialisierung, keine SceneTree-Suche pro Frame.
+- **Konkrete Arbeit:** 1. `level_id` exportieren, Verzeichnis einmal in `prepare_world()` vor Kamera-/Playerfreigabe aufbauen (Interactables per Vertrag, Marker3D über Metadaten `persistent_id`). 2. Prüfregeln: leer, Duplikat (beide Pfade melden), Formatverstoß (nicht still trimmen), unerwarteter Objekttyp; bei Fehler `push_error` und `false` → Main bleibt im Menü mit Fehlermeldung (bestehender Pfad). 3. Player/Traversalmarker erhalten IDs nur, wenn Architektur §24 sie verlangt (Player feste Akteur-ID; Traversalmarker optional). 4. Testfall mit temporär duplizierter ID in einer Testkopie der Sandbox (nicht im Repo) oder über Testskript, das eine zweite Instanz mit gleicher ID einfügt.
+- **Nicht-Ziele:** Save-/Restore-Auflösung, Inhaltsrevisionen, Kompatibilitätsregeln.
+- **Acceptance Criteria:** Leere/doppelte/ungültige IDs stoppen die Freigabe mit eindeutiger Diagnose; gültige Sandbox startet unverändert; Rename/Umordnen eines Nodes ändert keine ID; Verzeichnis wird je Weltaufbau neu erstellt (kein Stale nach Weltwechsel).
+- **Auszuführende Tests:** Parser/Import; headless Datentest der Prüfregeln; Laufzeittest Weltwechsel × 3 mit Verzeichnisneuaufbau; bestehende Regressionen.
+- **Erforderlicher Godot-Test:** Editorwarnung sichtbar bei fehlender ID; Fehlermeldung im Menü bei Duplikat.
+- **Windows-Exporttest:** In P2-08.
+- **Claude-Self-Review:** SR 1–9; Schwerpunkt keine stillen Korrekturen von IDs, Fehlerpfad ohne halbfertige Welt (WorldHost leer).
+- **Erwarteter Bericht:** ID-Konvention, Prüfregeln, Diagnosebeispiele, Testfälle.
+- **Git-/Commitregel:** G1.
+- **Astra-Review:** Kein eigenes Gate.
+- **Junior-Test:** Nein.
+- **Blocker / offene Entscheidung:** Keine; Levelpräfix der Sandbox ist technisch (z. B. `sandbox/…`), keine Raumfestlegung.
+
+### P2-03 – Türen mit kontrolliertem Blatt
+
+- **Task-ID:** P2-03.
+- **Titel:** Door-Prefab mit Stellung, getrennter Verriegelung, physiksynchronem Blatt und Blockadereaktion.
+- **Phase:** P2.
+- **Milestone:** M2.
+- **Status:** GATE_OPEN – E04-Testregel (Blockadereaktion, Türmaße für den Test) vor Beauftragung vorläufig bestätigen.
+- **Verantwortliche Rolle:** Claude Code / Opus 5.0; Project Lead bestätigt E04-Testregel.
+- **Priorität:** Hoch; Kern der Türprobe.
+- **Ziel:** Türen mit klaren logischen Zuständen, deren Kollision, Verriegelung und Hinweis denselben Zustand darstellen (ADR-002).
+- **Sichtbares Ergebnis:** Eine freie Tür öffnet/schließt sichtbar auf `interact`; eine verriegelte Tür meldet nachvollziehbar „verriegelt“; Schließen auf den Spieler quetscht nicht.
+- **Voraussetzungen / Gates:** P2-01, P2-02. **E04 (Testregel):** Blockadereaktion – Architekturempfehlung „Schließen bei Belegung ablehnen; bei neu eintretender Blockade während des Schließens stoppen und sicher wieder öffnen“ – sowie vorläufige Türbreite/-höhe und Öffnungsdauer für den Test bestätigen; keine Schadensregel.
+- **Relevante Dokumentreferenzen:** GDD §15; TDD §8, 26.2/AC-06; Architektur §§9, 10, 25 „Door“, 26; ADR-002; Roadmap §5/P2 „Türverriegelung und Stellung bleiben getrennt; Blockade führt nicht zu Quetschen/Wanddurchtritt“, §6/E04.
+- **Zu lesende Bestandsdateien:** AGENTS.md, CLAUDE.md, `interactable.gd`, `player_interactor.gd`, `switch.gd`, `vertical_slice.gd`, Sandbox, `player.gd` (nur Kollisionsverhalten lesen).
+- **Erlaubte Dateien / Verzeichnisse:** neu `game/world/door/door.gd`/`.tscn` (Leaf `AnimatableBody3D` + CollisionShape3D + Visuals, `AnimationPlayer` mit `sync_to_physics`, `Clearance` Area3D, `ActionAudio` optional mit vorhandenem Testton); `game/tests/systems_sandbox.tscn` (Türrahmen aus Primitiven, eine freie und eine verriegelte Tür, Schalter der die Verriegelung als lokale Quelle schaltet); `game/debug/debug_overlay.gd` (lesende Türzeile); D1/Metadaten.
+- **Ausdrücklich verbotene Änderungen:** V1; keine RigidBody-Tür, kein zusätzliches `move_and_collide` am Blatt, keine Puzzlebindung, keine Navigationslogik (P2-06), kein Save-Zustand, keine Kreaturenlogik.
+- **Konkrete Arbeit:** 1. Zustände `CLOSED/OPENING/OPEN/CLOSING`; Verriegelung getrennt mit genau einer lokalen Quelle (exportiert `locked`; Schalterbindung als lokale Freigabe nur für den Test). 2. `get_action_info`: „Öffnen“/„Schließen“ oder Ablehnung „verriegelt“/„blockiert“/„in Bewegung“. 3. Übergänge nur durch Door autorisiert; Animation ist Darstellung; Kollision folgt dem Blatt physiksynchron. 4. Clearance prüft Player (und später Creature) → Schließen bei Belegung ablehnen; Blockade während CLOSING → stoppen und sicher öffnen (E04-Testregel). 5. Endstellung ohne Animation setzbar (späterer Restore-Anschluss, keine Save-Implementierung). 6. Pause friert Blatt/Animation ein (WorldHost pausable), Resume setzt fort.
+- **Nicht-Ziele:** Schlüssel-/Item-Türen (Item-Verriegelung folgt mit E05/P3 bzw. P6), Navigationslink, Sound-Design, Türgeometrie des Produkts.
+- **Acceptance Criteria:** Stellung und Verriegelung sind getrennt und konsistent mit Kollision/Hinweis; Blockade quetscht nicht und erzeugt keinen Wanddurchtritt; wiederholte Eingabe während Übergang wirkt nicht doppelt; Pause/Fokus/Weltwechsel hinterlassen keine Zwischenstellung; P1-Regression grün; Traversal an Türen nicht betroffen.
+- **Auszuführende Tests:** Parser/Import; Laufzeittest headless + Fenster: Öffnen/Schließen, verriegelt, Schließen mit Player im Durchgang, Player betritt während CLOSING, Pause mitten in OPENING, Weltwechsel während Übergang, Doppelklick; Regressionen.
+- **Erforderlicher Godot-Test:** Editor: Blatt sichtbar, Kollision spürbar, keine Durchdringung beim Stehen im Rahmen.
+- **Windows-Exporttest:** In P2-08.
+- **Claude-Self-Review:** SR 1–9; Schwerpunkt ein Zustandsbesitzer je Tür, keine konkurrierenden Schreiber, physiksynchrone Blattbewegung.
+- **Erwarteter Bericht:** E04-Testregel, Zustandsdiagramm, Blockadefälle, Maße, Grenzen.
+- **Git-/Commitregel:** G1.
+- **Astra-Review:** Kein eigenes Gate; enger Auftrag nur bei schwer reproduzierbarem Kollisions-/Blattproblem.
+- **Junior-Test:** Optional; formal J2.
+- **Blocker / offene Entscheidung:** E04-Testregel; Türmaße bleiben Testwerte bis E16b.
+
+### P2-04 – Pickups und Inventory-Kern
+
+- **Task-ID:** P2-04.
+- **Titel:** ItemDefinition, Inventory-Datenobjekt, Pickup-Prefab mit synchroner Aufnahme und einfacher Bestandsrückmeldung.
+- **Phase:** P2.
+- **Milestone:** M2.
+- **Status:** GATE_OPEN – E05 vor Beauftragung vorläufig bestätigen.
+- **Verantwortliche Rolle:** Claude Code / Opus 5.0; Project Lead/Autoren bestätigen E05.
+- **Priorität:** Hoch; „Aufnahme ohne Inventory wäre Scheinfunktion“ (Roadmap).
+- **Ziel:** Aufnahme verändert Bestand und Weltfund gemeinsam; Ablehnung lässt den Fund in der Welt.
+- **Sichtbares Ergebnis:** Neutraler Testgegenstand wird aufgenommen, verschwindet sichtbar, HUD/Overlay zeigt den Bestand; bei vollem Inventar bleibt er liegen mit Ablehnungshinweis.
+- **Voraussetzungen / Gates:** P2-01, P2-02. **E05:** vorläufige Kapazität, Stapeln ja/nein und Stapelgrenze, Aufnahmebedienung (`interact`), Schutzregel kritischer Gegenstände (reservierte Kapazität oder getrennte Verwaltung) mindestens als vorläufige Testregel; kein Abwerfen.
+- **Relevante Dokumentreferenzen:** GDD §19; TDD §§9, 21 „Items/Inventar“, 26.2/AC-06/07/21, 26.4 „Gemeinsame Definition“; Architektur §§11, 23, 24, 25 „Pickup“, 26, 29 (Datentests); Roadmap §5/P2, §6/E05, §7 „Save/Restore – Daten-/Besitzgrenzen ab P2“.
+- **Zu lesende Bestandsdateien:** AGENTS.md, CLAUDE.md, `interactable.gd`, `player.gd` (Besitz des Inventory), `vertical_slice.gd` (Koordination), `game_ui.gd` (HUD), `debug_overlay.gd`, Sandbox.
+- **Erlaubte Dateien / Verzeichnisse:** neu `game/items/item_definition.gd` (Resource: `item_id`, Anzeigename, Kategorie, stapelbar/Stackgrenze, kritisch), `game/data/items/*.tres` nur neutrale Testdefinitionen, `game/player/inventory.gd` (RefCounted: Aufnahme prüfen/ausführen, Verfügbarkeit, Zustand ausgeben), `game/world/pickup/pickup.gd`/`.tscn`, `game/tests/data_checks.gd` (headless Daten-/Vertragstests Inventory/ItemDefinition); geändert `game/player/player.gd` (nur Inventory-Erzeugung/Zugriff), `game/levels/vertical_slice/vertical_slice.gd` (Aufnahmekoordination: Phase, Fund vorhanden, Inventory-Kapazität, synchrone Änderung, Wiedereintrittssperre), `game/ui/game_ui.gd`/`.tscn` (einfache Bestandsrückmeldung im HUD, kein InventoryPanel), `game/debug/debug_overlay.gd`, Sandbox (zwei Funde desselben Typs mit eigenen Pickup-IDs, ein kritischer Testfund); D1/Metadaten.
+- **Ausdrücklich verbotene Änderungen:** V1; kein InventoryPanel/Bedienung (P3), keine Nutzung/Verbrauch, kein Flashlight/Tempo-Item, kein Abwerfen, keine Save-Serialisierung, keine Produktgegenstände, keine Bestandsdaten in geteilten Resources.
+- **Konkrete Arbeit:** 1. ItemDefinition statisch, ohne Laufzustand. 2. Inventory als Player-eigenes Datenobjekt mit klarem Vertrag und Datenkopie für Tests. 3. Pickup: Interactable mit HitArea/Visuals, Menge, `collected`; nach Aufnahme deaktiviert/unsichtbar, bleibt als Zustandsanker instanziiert. 4. Ablauf ohne `await`: Pickup-Anfrage → Level prüft → Bestand und Fundstatus gemeinsam ändern → erst danach UI/Overlay benachrichtigen; lokale Wiedereintrittssperre. 5. `data_checks.gd`: Kapazität, Stapeln, Ablehnung, kritische Regel, zwei Instanzen derselben Definition unabhängig, Definition unverändert.
+- **Nicht-Ziele:** Inventaransicht, Nutzung, Rätselverbrauch, Snapshot/Restore.
+- **Acceptance Criteria:** Aufgenommener Fund genau einmal im Inventory; bei Ablehnung bleibt er in der Welt; Doppelklick erzeugt keinen doppelten Besitz; kritische Schutzregel prüfbar; geteilte Definition bleibt unverändert; Weltwechsel setzt Inventory und Funde neu auf (keine alten Referenzen); HUD zeigt nach Aufnahme sofort korrekten Bestand.
+- **Auszuführende Tests:** `data_checks.gd` headless; Laufzeittest: Aufnahme, volles Inventar, kritischer Fund, schnelle Wiederholung, Pause während Hinweis, Weltwechsel; Regressionen.
+- **Erforderlicher Godot-Test:** Editor: Fund sichtbar/unsichtbar, Rückmeldung lesbar.
+- **Windows-Exporttest:** In P2-08.
+- **Claude-Self-Review:** SR 1–9; Schwerpunkt synchrone gemeinsame Änderung, keine Bestandskopie in UI, Definition ohne Laufzustand.
+- **Erwarteter Bericht:** E05-Profil, Vertrag, Testfälle, offene Schutzregelfragen.
+- **Git-/Commitregel:** G1.
+- **Astra-Review:** Kein eigenes Gate.
+- **Junior-Test:** Formal J2 („Item aufnehmen, Besitz verstehen“).
+- **Blocker / offene Entscheidung:** E05; konkrete Schutzregel bei vollem Inventar kann als vorläufige Testregel bestätigt werden (Architektur §11 NOCH OFFEN).
+
+### P2-05 – Neutraler Testhinweis und Leseansicht
+
+- **Task-ID:** P2-05.
+- **Titel:** StoryNote-Vertrag mit neutralem Testtext und erster bedienbarer Leseansicht.
+- **Phase:** P2.
+- **Milestone:** M2.
+- **Status:** GATE_OPEN – E06 (Öffnen/Schließen, Weltpause beim Lesen) vor Beauftragung vorläufig bestätigen.
+- **Verantwortliche Rolle:** Claude Code / Opus 5.0; Project Lead/Autoren bestätigen E06.
+- **Priorität:** Mittel; letzter Interaktionstyp von P2, Voraussetzung für J2 „Testhinweis lesen“.
+- **Ziel:** Ein Hinweis lässt sich in Ruhe öffnen und schließen, ohne Story festzulegen.
+- **Sichtbares Ergebnis:** `interact` auf einen Testzettel öffnet ein Textpanel mit neutralem Platzhaltertext; Schließen kehrt sauber ins Spiel zurück (Maus gefangen, keine Eingabe durchgereicht).
+- **Voraussetzungen / Gates:** P2-01, P2-02. **E06:** Eingabe zum Öffnen/Schließen (z. B. `interact`/Escape/Klick), ob die Welt während des Lesens pausiert, Verhältnis zur Escape-Pause (E03a).
+- **Relevante Dokumentreferenzen:** GDD §§15 (Lesen in Ruhe), 21 nur Grundsatz, 27; TDD §§8, 16 (nur Melder-Rolle), 18, 26.2/AC-06/18; Architektur §§6 „StoryNote“, 14 (Melder, gefunden ≠ gelesen), 20 (StoryPanel, exklusiver Ansichtsstatus), 25; Roadmap §5/P2 „Testhinweis lässt sich bedienen, ohne eine Story festzulegen“, §6/E06.
+- **Zu lesende Bestandsdateien:** AGENTS.md, CLAUDE.md, `main.gd` (Phasen/Pausebesitz), `game_ui.gd`/`.tscn`, `interactable.gd`, `vertical_slice.gd`, Sandbox.
+- **Erlaubte Dateien / Verzeichnisse:** neu `game/world/story/story_note.gd`/`.tscn` (Interactable, Hinweis-ID, Text als exportierte Daten, Öffnungsanfrage an Level); geändert `game/levels/vertical_slice/vertical_slice.gd` (Mengen „gefunden/gelesen“ nur als lokale Flags, Anzeigeanfrage an Main), `game/app/main.gd` (nur exklusiver Ansichtsstatus „Lesen“ gemäß E06, kein zweites Flow-Modell), `game/ui/game_ui.gd`/`.tscn` (`StoryPanel` mit Schließen), `game/player/player.gd` nur Eingabesperre während offener Ansicht, Sandbox (ein Testzettel); D1/Metadaten.
+- **Ausdrücklich verbotene Änderungen:** V1; keine Story-/Hinweisinhalte, kein StoryTrigger, kein Fortschrittssystem, keine Quest-/Dialogmaschine, keine Save-Daten, kein Inventarpanel.
+- **Konkrete Arbeit:** 1. StoryNote als Melder (keine eigene Fortschrittswahrheit). 2. Level vermerkt „gefunden“ beim Öffnen; „gelesen“ nach der in E06 bestätigten Bedienregel. 3. Main/UI: Ansicht öffnen → Maus frei, Gameplay-Eingabe gesperrt, Weltpause gemäß E06; Schließen → Rückkehr in PLAYING mit denselben Sicherungen wie Resume (kein Nachlauf, kein Blicksprung, kein gepuffertes `interact`). 4. Escape während Lesen gemäß E06 (schließt Ansicht oder öffnet Pause – bestätigen). 5. Fokusverlust während Lesen → E03a-Verhalten bleibt.
+- **Nicht-Ziele:** Textgestaltung, Schriftbild, mehrere Seiten, Storyfortschritt, Inventarplatz für Hinweise.
+- **Acceptance Criteria:** Öffnen/Schließen reproduzierbar; keine Doppelöffnung; keine durchgereichte Eingabe; Maus-/Fokusmodus korrekt; Pause/Fokus während Ansicht konsistent; Weltwechsel schließt die Ansicht; P1-Regression grün.
+- **Auszuführende Tests:** Parser/Import; Laufzeittest headless + Fenster: Öffnen, Schließen, Doppel-`interact`, Escape gemäß E06, Fokusverlust während Ansicht, Weltwechsel mit offener Ansicht; Regressionen.
+- **Erforderlicher Godot-Test:** Editor: Panel lesbar, Rückkehr sauber.
+- **Windows-Exporttest:** In P2-08.
+- **Claude-Self-Review:** SR 1–9; Schwerpunkt ein Ansichtsstatus in Main, UI ohne Fortschrittskopie, keine Storyfestlegung.
+- **Erwarteter Bericht:** E06-Profil, Ansichtsablauf, Testfälle.
+- **Git-/Commitregel:** G1.
+- **Astra-Review:** Kein eigenes Gate.
+- **Junior-Test:** Formal J2 („Testhinweis lesen“).
+- **Blocker / offene Entscheidung:** E06; O-17-Feindarstellung bleibt P10.
+
+### P2-06 – Tür-/Navigationsprobe mit Prüfakteur
+
+- **Task-ID:** P2-06.
+- **Titel:** Navmesh-Lücke, zugewiesener NavigationLink3D an einer Tür und minimaler Creature-Körper zu festen Testzielen.
+- **Phase:** P2.
+- **Milestone:** M2; liefert den E04-Kopplungsnachweis vor P4.
+- **Status:** PLANNED – nach P2-03; E04-Kopplungsnachweis ist Ergebnis, nicht Voraussetzung.
+- **Verantwortliche Rolle:** Claude Code / Opus 5.0; Project Lead bewertet E04-Befund; Astra nur bei ungeeigneter Linklösung (enger Auftrag).
+- **Priorität:** Hoch; höchstes technisches Risiko von P2.
+- **Ziel:** Nachweisen, dass ein geschlossener Durchgang keine KI-Route ist und ein offener Durchgang nach Map-Synchronisation kontrolliert begehbar wird – ohne zweite KI oder eigene Navigationsplattform.
+- **Sichtbares Ergebnis:** Ein neutraler Prüfkörper läuft zwischen zwei Testankern; bei geschlossener Tür bleibt er auf seiner Seite, bei offener Tür geht er hindurch; Schließen bei belegtem Durchgang wird abgelehnt.
+- **Voraussetzungen / Gates:** P2-02 (Anchors/IDs), P2-03 (Door, Clearance). ADR-004; Architektur §17 Reviewentscheidung (Link nur je tatsächlich dynamischem Durchgang). Kein E09/E14a nötig (keine Wahrnehmung, kein Horrorinhalt).
+- **Relevante Dokumentreferenzen:** TDD §§12 (nur Körper/Agent), 20 (Navigationsbereitschaft), 26.2/AC-13; Architektur §§10, 15 (nur Körper/Aktivierungsgrenze), 17 vollständig, 25 „Creature“ und „Navigation“, 26, 27; ADR-004; Roadmap §5/P2 „Früher Risikoprototyp“, §6/E04, §7 „Tür + Navigation“.
+- **Zu lesende Bestandsdateien:** AGENTS.md, CLAUDE.md, `door.gd`, `vertical_slice.gd`, `main.gd` (PREPARING/Aktivierung), Sandbox, `player.gd` nur als Vorbild für Motor/Freigabe.
+- **Erlaubte Dateien / Verzeichnisse:** neu `game/creature/creature.gd`/`.tscn` (CharacterBody3D, BodyShape, `NavigationAgent3D`, `VisionOrigin` nur als Marker, Visuals-Primitiv; Ausbaustufe „bewegt sich kollisionsgeprüft zu zugewiesenem Ziel“, Begegnungsfreigabe separat, standardmäßig inaktiv), `game/creature/creature_tuning.gd` + `game/data/creature_tuning.tres` nur mit den für die Probe nötigen Werten (Tempo, Körpermaße, Zielabstand); geändert `game/world/door/door.gd` (optionale exportierte Linkreferenz: Link vor Schließen deaktivieren, erst bei vollständig offener Stellung aktivieren, Durchgangsmeldung), `game/levels/vertical_slice/vertical_slice.gd` (optionale Teilnehmer Navigation/Creature, Zielvergabe aus Anchors, Map-Synchronisation abwarten mit begrenztem Abbruch, Weginvalidierung bei Durchgangsänderung), `game/tests/systems_sandbox.tscn` (`Navigation`-Zweig: NavigationRegion3D mit echter Lücke am Türdurchgang, genau ein `NavigationLink3D`; abgetrennter Proberaum mit zwei Räumen und der Tür aus P2-03; Prüfakteur mit ID), `game/debug/debug_overlay.gd` (lesend: Agentziel, Link aktiv, Map synchron); `game/project.godot` nur Layer `Creature`; D1/Metadaten.
+- **Ausdrücklich verbotene Änderungen:** V1; keine FSM, Sicht/Hören, Schaden, Verfolgung, zweite Kreatur, Avoidance, Rebake zur Laufzeit, eigenes Wegpunktsystem, Teleports; keine Türöffnung durch die Kreatur; Prüfakteur nie in der P1-Movement-Strecke aktiv.
+- **Konkrete Arbeit:** 1. Navmesh im Proberaum backen (Editor), Lücke am Durchgang prüfen (keine automatische Kantenverbindung/Überlappung). 2. Link mit passenden Endpunkten/Radius über physisch vorhandenen Boden; Door schaltet ihn gemäß Architektur §17. 3. Creature-Motor: Agent liefert Weg, Körper bewegt sich selbst per `move_and_slide`; Agent erst nach bestätigter Map-Synchronisation abfragen; neue Ziele nur bei Änderung. 4. Level koordiniert Zielvergabe (Testanker A ↔ B) im Entwicklungsmodus (Sandbox-Exportflag, standardmäßig aus), invalidiert den Weg bei Durchgangsänderung und plant nach Synchronisation neu. 5. Fälle: geschlossen → keine Route (Akteur bleibt, kontrollierter Ausgang „unerreichbar“); geöffnet → Route durch den Durchgang; Schließen bei belegtem Durchgang abgelehnt; Schließen bei vorhandenem Weg → Weg invalidiert, Akteur stoppt kontrolliert; offene Blattstellung blockiert keinen benachbarten gebackenen Weg. 6. Befund für E04 dokumentieren; bei ungeeigneter Linklösung Neubewertung anfordern, nicht nebenbei Alternative bauen.
+- **Nicht-Ziele:** Wahrnehmung, Verfolgung, Suche, Schaden, Kreaturendarstellung, Produktdurchgänge, Fluchtwege.
+- **Acceptance Criteria:** Prüfakteur routet nie durch den geschlossenen Durchgang; Öffnen/Schließen und Navigationsbereitschaft geprüft; kein Wanddurchtritt, Richtungsflackern oder unbegrenztes Neuplanen; legale Unerreichbarkeit von Defekt unterscheidbar (Diagnose); Prüfakteur ohne Freigabe vollständig passiv; Pause friert ihn ein; Weltwechsel ohne alte Agent-/Linkreferenzen; P1-Regression grün.
+- **Auszuführende Tests:** Parser/Import; Laufzeittest headless + Fenster mit Map-Synchronisationswartezeit: Ziel bei geschlossener/offener Tür, Schließen während Route, Belegung, Pause/Resume mitten im Weg, Weltwechsel; Regressionen.
+- **Erforderlicher Godot-Test:** Editor: Navmesh-Anzeige mit sichtbarer Lücke, Link sichtbar, Akteur läuft nachvollziehbar.
+- **Windows-Exporttest:** In P2-08 (Navigationsdaten im Paket).
+- **Claude-Self-Review:** SR 1–9; Schwerpunkt keine Teleports, keine Routen durch geschlossene Türen, Bereitschaftsprüfung statt fester Wartezeit, Aktivierungsgrenze des Prüfakteurs.
+- **Erwarteter Bericht:** E04-Kopplungsbefund (bestanden/fehlgeschlagen mit Fällen), Navmesh-/Linkparameter, Engine-Hinweise (Experimental-Markierungen), Empfehlung für P4.
+- **Git-/Commitregel:** G1.
+- **Astra-Review:** Kein reguläres Gate; enger Astra-Auftrag bei unzuverlässiger Kopplung (Roadmap §9).
+- **Junior-Test:** Nein (technische Probe); Junior darf zusehen.
+- **Blocker / offene Entscheidung:** Fehlschlag blockiert P4/P7-Raumproduktion, nicht die Bestandslogik P2-04/05. Türblattgeometrie/Radius sind Testwerte.
+
+### P2-07 – Kleine Renderer-/Licht-/Materialprobe für E02b
+
+- **Task-ID:** P2-07.
+- **Titel:** Repräsentative Licht-/Material-/Lampenprobe in der Sandbox und Messung unter Forward+, Mobile und Compatibility.
+- **Phase:** P2.
+- **Milestone:** M2; liefert den Befund für E02b vor P3.
+- **Status:** PLANNED – unabhängig von P2-01…06, spätestens vor P2-08; E13a nur falls eine externe Importprobe gewünscht wird (sonst Primitive).
+- **Verantwortliche Rolle:** Claude Code / Opus 5.0 (Messung); Project Lead entscheidet E02b.
+- **Priorität:** Mittel; Pflicht vor rendererabhängiger Grafik-/Lampenarbeit in P3.
+- **Ziel:** Belastbaren Vergleich der drei Renderer auf der erfassten Hardware mit einer kleinen repräsentativen Probe liefern, ohne Artproduktion.
+- **Sichtbares Ergebnis:** Messtabelle (Framezeiten, RAM/VRAM, Editor+Spiel vs. Standalone, Erst-/Wiederholungslauf) je Renderer; sichtbare Lesbarkeit einer kegelförmigen Testlampe und einiger Materialien.
+- **Voraussetzungen / Gates:** P0-01/P0-04-Messbasis; E02a-Profil; E13a nur bei externem Testasset (kein Download ohne Freigabe).
+- **Relevante Dokumentreferenzen:** GDD §§24, 25 nur Grundsatz; TDD §23, 26.2/AC-22; Architektur §§12 (nur Kosten/Lesbarkeit), 30; ADR-008; Roadmap §5/P2 letzter Done-Punkt, §6/E02b/E13a/E18, §7 „Renderer / Ressourcen“.
+- **Zu lesende Bestandsdateien:** AGENTS.md, CLAUDE.md, `game/project.godot`, Sandbox, P0-01/P0-04-Messbefunde, P1-05-Speicherbefund.
+- **Erlaubte Dateien / Verzeichnisse:** `game/tests/systems_sandbox.tscn` (kleine `LightingProbe`-Gruppe: wenige StandardMaterial3D-Varianten auf Primitiven, ein Schattenlicht, eine an der Playerkamera montierte Test-SpotLight, die nur über ein Sandbox-Exportflag im Entwicklungsmodus aktiv ist – **keine** Flashlight-Spielerfunktion); temporäre Messskripte außerhalb des Repos; Messläufe über Kommandozeilenparameter `--rendering-method`, ohne `project.godot` dauerhaft umzustellen; Ausgaben unversioniert unter `exports/p2/`; D1/Metadaten.
+- **Ausdrücklich verbotene Änderungen:** V1; kein Rendererwechsel in `project.godot`, keine Produktassets/Downloads, keine Flashlight-Logik im Player, keine Lichtabstimmung des Produkts, keine großflächige Szene.
+- **Konkrete Arbeit:** 1. Probe aufbauen (Primitive, Materialien, Schattenlicht, Testkegel). 2. Je Renderer: Start, Sandbox, feste Teststrecke, Frametime-Mittel/Spitzen, `MEMORY_STATIC`, `RENDER_VIDEO_MEM_USED`, Working Set; Editor+Spiel und Standalone-Debug; Erst- und Wiederholungslauf. 3. Sichtprüfung Lesbarkeit/Artefakte je Renderer notieren. 4. Befund als E02b-Vorschlag ohne Vorentscheidung.
+- **Nicht-Ziele:** Endgültige Budgets (E18), Artrichtung (E19), finale Lampe (P3), Grafikpolish (P8).
+- **Acceptance Criteria:** Alle drei Renderer gemessen oder nicht lauffähig dokumentiert; Zahlen mit Gerät/Profil/Strecke reproduzierbar; Sandbox ohne Flag unverändert; P1-Regression grün.
+- **Auszuführende Tests:** Parser/Import; Messläufe; Regressionen (Probe inaktiv).
+- **Erforderlicher Godot-Test:** Sichtprüfung je Renderer im Fenster.
+- **Windows-Exporttest:** Standalone-Debug je Renderer (Kommandozeile), Release unverändert.
+- **Claude-Self-Review:** SR 1–9; Schwerpunkt keine bleibende Projektumstellung, Flag standardmäßig aus, keine Spielerfunktion.
+- **Erwarteter Bericht:** Messtabelle, Sichtbefund, E02b-Vorschlag, E18-Hinweise.
+- **Git-/Commitregel:** G1.
+- **Astra-Review:** Nein.
+- **Junior-Test:** Nein.
+- **Blocker / offene Entscheidung:** E02b-Entscheidung durch Project Lead vor P3; E13a bei externem Asset.
+
+### P2-08 – Integrierter P2-Test, Export und J2
+
+- **Task-ID:** P2-08.
+- **Titel:** Vollständigen P2-Stand praktisch prüfen, Export nachweisen und mit Junior abnehmen.
+- **Phase:** P2.
+- **Milestone:** M2-Zwischenstand; Übergabe an P3 (Integrationspunkt Roadmap §10).
+- **Status:** PLANNED – nach P2-01…07.
+- **Verantwortliche Rolle:** Project Lead koordiniert/bewertet; Claude Code / Opus 5.0 technische Tests; Junior/Autoren J2.
+- **Priorität:** Hoch.
+- **Ziel:** Interaktion, Besitz, Türen, Hinweis und Navigationsprobe als zusammenhängendes System mit unveränderter P1-Basis beurteilen.
+- **Sichtbares Ergebnis:** Reproduzierbarer Ablauf im Editor und Windows-Debugexport; dokumentierter J2-Befund; fixierter Stand für den P2-Integrationscommit.
+- **Voraussetzungen / Gates:** P2-01…07 mit SR und Tests; E04-Kopplungsbefund und E02b-Vorschlag vorhanden; E05/E06-Belege eingetragen.
+- **Relevante Dokumentreferenzen:** TDD §26.2/AC-01/02/03/06/07/13/18/21/23/24, 26.4; Architektur §§28–31; Roadmap §5/P2 „Test / Done“, §8/J2, §10, §11 „Verbindliche spätere Regressionen“.
+- **Zu lesende Bestandsdateien:** AGENTS.md, CLAUDE.md, alle P2-Befunde, gesamte Sandbox, Player/Interactor/Inventory/Door/Pickup/StoryNote/Creature, Main/UI/Level, Export-/Projektkonfiguration.
+- **Erlaubte Dateien / Verzeichnisse:** Bestehende Implementierung lesend; D1; unversionierte Exporte/Testskripte unter `exports/p2/`. Korrekturen mit konkretem Befund im zuständigen P2-Task (dessen Dateigrenze) oder bei P1-Regression im zuständigen P1-Task.
+- **Ausdrücklich verbotene Änderungen:** V1; keine neuen Mechaniken aus Feedback, kein Produktlevel, kein Abschwächen der Release-Sperren (`tests/*`, `debug/*`), keine Tuningänderung ohne menschlichen Befund.
+- **Konkrete Arbeit:** 1. Zusammenhängender Ablauf: Menü → Sandbox → P1-Movement-Strecke (Regression) → Schalter → freie Tür → verriegelte Tür → Schalter entriegelt → Funde (normal/voll/kritisch) → Hinweis lesen/schließen → Prüfakteur bei geschlossener/offener Tür → Pause/Fokus in jeder Ansicht → Menü → zweiter Lauf ohne alte Referenzen (Inventory leer, Funde zurück, Türen Ausgangsstellung, kein Agentrest) → Beenden. 2. Alle bestehenden Tests erneut (R0, R1-Regression, P1-Kopien, P2-Tests, `data_checks.gd`). 3. Debug-/Release-Export frisch; Release ohne `tests/`/`debug/`; Navigationsdaten/Items/Türen im Paket; Standalone-Start und OS-Tastatur-Smoke. 4. Strukturprüfung: genau ein Positionsschreiber je Körper (Player, Creature-Körper), keine Autoloads, eine aktive Kamera, keine Zustandskopie in UI. 5. J2 begleiten: Tür öffnen, Schalter bedienen, Item aufnehmen, Testhinweis lesen; Fragen nur zu Zielerkennung, Rückmeldung, Erfolg/Ablehnung, Besitzverständnis. 6. Technische Fehler von Design trennen; Übergabe an P3 mit offenen Gates (E02b-Entscheidung, E06/E07/E08 für P3).
+- **Nicht-Ziele:** M2-Abnahme (erst nach P3), Rätsel-/Storybewertung, Performancebudgets.
+- **Acceptance Criteria:** Roadmap §5/P2 „Test / Done“ in vorhandenem Umfang erfüllt: Interaktion vor/hinter Wand, Reichweite, Wiederholung; Item genau einmal, Ablehnung lässt Fund; Verriegelung/Stellung getrennt, keine Quetschung; Prüfakteur nicht durch geschlossenen Durchgang; IDs stoppen bei Fehler; Hinweis bedienbar; E02b-Befund vorhanden; J2 durchgeführt und bewertet; P1-Werte unverändert.
+- **Auszuführende Tests:** Wie Konkrete Arbeit 2–4; bei variierender Bildrate und mehrfachen Weltwechseln.
+- **Erforderlicher Godot-Test:** Ja, kompletter Durchlauf und J2.
+- **Windows-Exporttest:** Ja, frischer Debugexport mit gesamtem Ablauf; Release-Grundhülle startet, Testpfade gesperrt.
+- **Claude-Self-Review:** Testbericht und Diff-/Scopeprüfung nach SR; bei Korrektur SR 1–9 im zuständigen Task.
+- **Erwarteter Bericht:** Fallmatrix, Editor-/Exportvergleich, J2-Beobachtungen in Juniors Worten, Fehler/Nachtests, Gate-Belege (E04-Kopplung, E02b-Vorschlag), offene Regressionen für P3–P7.
+- **Git-/Commitregel:** G1; Integrationspunkt „Implement interaction, inventory core and door navigation probe“ nur bei ausdrücklicher Freigabe.
+- **Astra-Review:** Kein reguläres Gate; R2 Ende P4.
+- **Junior-Test:** Ja – **J2**.
+- **Blocker / offene Entscheidung:** Ausstehendes J2, fehlgeschlagener E04-Nachweis oder blockierender Interaktionsfehler verhindern die Übergabe an P3.
+
+### Reihenfolge, Gates und nächster Auftrag in P2
+
+| Reihenfolge | Task | Vorher zu bestätigen | Erstes sichtbares Ergebnis |
+| --- | --- | --- | --- |
+| 12 | P2-01 Interaktionsvertrag/Interactor/Schalter | Interaktionsprofil (E04, Bedienung) | Hinweis und Schalter reagieren |
+| 13 | P2-02 IDs/Levelvalidierung | – | Fehlerhafte IDs stoppen den Start |
+| 14 | P2-03 Türen | E04-Testregel | Tür öffnet/schließt, quetscht nicht |
+| 15 | P2-04 Pickups/Inventory-Kern | E05 | Fund verschwindet in den Besitz |
+| 16 | P2-05 Testhinweis/Leseansicht | E06 | Zettel lesen und schließen |
+| 17 | P2-06 Tür-/Navigationsprobe | – (liefert E04-Kopplung) | Prüfakteur respektiert die Tür |
+| 18 | P2-07 Rendererprobe | E13a nur bei externem Asset (liefert E02b) | Messtabelle |
+| 19 | P2-08 Integration, Export, J2 | Alle P2-Belege | Geprüfter P2-Stand, J2 |
+
+P2-07 kann parallel zu P2-02…06 laufen (unabhängige Dateien; Sandbox-Änderungen nacheinander integrieren). P2-05 und P2-06 sind voneinander unabhängig. **Nächster an Claude Code zu vergebender Auftrag: P2-01**, sobald das Interaktionsprofil bestätigt ist; kein automatischer Beginn.
+
+## 8. P3–P12 – Nur zukünftige Taskgruppen
+
+**Wird detailliert, sobald vorherige Phase reale Befunde geliefert hat.** Es werden hier keine späteren Einzel-Task-IDs, Dateifreigaben oder Ausführungsaufträge vergeben. P2 ist seit 21.09.2026 in §7 detailliert; vor P3 zuerst P2-Ergebnisse (E04-Kopplung, E02b, J2) auswerten und weitere Phasen entsprechend fortschreiben. Quellen sind die gleichnamigen Phasen in Roadmap §5 und ihre Gates in §6.
 
 | Phase / Milestone | Grobe zukünftige Taskgruppen | Maßgebliche Voraussetzungen / spätere Prüfung |
 | --- | --- | --- |
-| P2 / M2 – Interaktion, echter Besitz und Tür-/Navigationsprobe | Interaction; Doors; Switches; Pickups; Inventory Core/ItemDefinition; neutraler Hinweis; IDs/Validierung; Door/Navigation Prototype mit minimalem späterem Creature-Motor; kleine Rendererprobe | P1; E04/E05/E06, E13a nur bei externer Importprobe; E02b vor P3; J2. Keine vollständige KI oder erfundenen Rätsel. |
+| P2 / M2 – Interaktion, echter Besitz und Tür-/Navigationsprobe | **Detailliert in §7 (P2-01 bis P2-08).** | P1 erfüllt; E04/E05/E06, E13a nur bei externer Importprobe; E02b vor P3; J2. |
 | P3 / M2 – Itemnutzung, Player State und Niederlage | Inventarbedienung; Flashlight; Tempo-Item; Health/Schaden/Tod; Game Over; Anfangs-Wiederanlauf im Speicher über vorhandenen Main-Aufbau | P2; E02b/E06/E07/E08; Movement-/Traversalregression bei Tod/Tempo. Noch keine dauerhaften Saves. |
 | P4 / M3 – Creature Prototype und erste Verfolgung | Eine FSM; Sicht/Hören; Navigation/Türkopplung; Chase/Search/Return; faire Flucht und kontrollierte Fehlerausgänge | P1–P3, E04/E09/E14a; J3 und R2; kein finales Monsterdesign aus Testkörpern ableiten. |
 | P5 / M4 – Save, Checkpoints und Restore | SaveService; JSON/user://; Autosave/Checkpoints und manuelle Speicherpunkte; eigenständiger Todes-Wiederanlauf; Fehler/Backup; neutrale Puzzle-/Progress-Verträge; Weltneuaufbau | P0–P4; E10/E11; R3, TDD §26.3; ausdrücklich Movement-/Haltungs-/Traversal-/Fokusregression nach Restore. |
@@ -595,7 +889,7 @@ Diese Verweise sind keine zusätzlichen Mikroaufgaben und keine bereits bestande
 | P11 / M7 – Integration, Spieltests und Balancing | Gesamtdurchläufe; Movement/Gefahr/Rätsel/Story/Checkpoints abstimmen; 15–25-Minuten-Ziel; Performance; Release Candidate | P7–P10 integriert; J6, Scope-/Regeländerungen ausdrücklich entscheiden. |
 | P12 / M8 – Stabilisierung und V0.1 Release | Fehlerbereinigung; kompletter Save-/Lifecycle-Regressionsnachweis; Windows-Installation/Export; Debugsperren; Lizenzen; Releaseprüfung | M7; E21, J7/R5 und Roadmap §16; keine neuen Features oder automatische Veröffentlichung. |
 
-## 8. Konsistenzprüfung der Planung
+## 9. Konsistenzprüfung der Planung
 
 | Prüffrage / Quelle | Ergebnis dieses Dokumentabgleichs |
 | --- | --- |
@@ -608,11 +902,15 @@ Diese Verweise sind keine zusätzlichen Mikroaufgaben und keine bereits bestande
 | Reviews gebündelt? Roadmap §9 | Ausschließlich R0 und R1 regulär, keine Feature-Einzelreviews. Godot/J1 vor R1; Claude-Self-Review verpflichtend, Korrekturzuständigkeit eindeutig. |
 | Gezielter Kontext? Roadmap §17 | Je Task genaue Abschnitte, ADRs und relevante Bestandsdateien; keine pauschale Pflicht zur vollständigen Neulektüre. |
 | Späterer Scope geschützt? GDD §§30–32, TDD §26, Roadmap §§11/13 | P2–P12 nur Gruppen; Tod-/Restore-/Inhaltsnachweise ausdrücklich später. Keine vorgezogenen Inventory-/Save-/KI-/Rätsel-/Asset-/Ausdauersysteme. |
+| P2 vollständig? Roadmap §5/P2 „Implementierungsergebnis“ und „Test / Done“ (Fortschreibung 21.09.2026) | Interactor/Interactable und Schalter in P2-01; IDs/Levelvalidierung in P2-02; Türen mit Blockadereaktion in P2-03; Pickups und Inventory-/ItemDefinition-Kern in P2-04; neutraler Testhinweis in P2-05; Creature-Körper/Navmesh/Link-Probe (E04-Kopplung) in P2-06; Licht-/Material-/Lampenprobe für E02b in P2-07; Integration, Export und J2 in P2-08. |
+| P2-Gates respektiert? Roadmap §6 | Interaktionsprofil vor P2-01, E04-Testregel vor P2-03, E05 vor P2-04, E06 vor P2-05, E13a nur bei externem Asset; E04-Kopplung und E02b sind Ergebnisse von P2-06/P2-07, Entscheidung vor P4 bzw. P3. Keine Zahlen erfunden. |
+| Levelbau nicht vorgezogen? Roadmap §5/P7, §12, §13; GDD §23/§30.2; Architektur §29 | Erster echter Level-/Greybox-Aufbau bleibt P7 nach E16b/E17/E18/E19; P2 erweitert nur die eine Systems Sandbox mit Primitiven. Der Wunsch Waldweg → Grundstück → Haus → Flur → Kellerzugang ist als Autorenvorbereitung für E16b vermerkt, nicht als P2-Task. |
+| Reviews in P2? Roadmap §9 | Kein reguläres Astra-Gate; enger Astra-Auftrag nur bei unzuverlässiger Türkopplung. J2 am Ende von P2. |
 | Redaktionelle Altstände? | TDD §1 nennt ältere vertauschte Agentenrollen; aktueller Auftrag/Roadmap §9 sind maßgeblich. Frühere offene Perspektiv-/Engineangaben werden durch angenommene ADRs konkretisiert. Historische Freigabevermerke sind keine neue sachliche Entscheidung. |
 
-**Ergebnis:** Keine fachlichen Widersprüche dieser Taskplanung zur Roadmap festgestellt. Die genannten redaktionellen Altstände sind kenntlich gemacht; die Quelldokumente bleiben unverändert. Die Entwicklungsmodusgrenze der Sandbox wird durch getrennte Debug-/Releaseprüfungen erhalten. Diese Aussage ist ausschließlich eine Dokumentprüfung: keine Hardwaremessung, kein Godot-Test, kein Export, kein J1 und kein R0/R1 wurden ausgeführt; kein Task wurde automatisch `ACCEPTED`.
+**Ergebnis (0.1):** Keine fachlichen Widersprüche dieser Taskplanung zur Roadmap festgestellt. Die genannten redaktionellen Altstände sind kenntlich gemacht; die Quelldokumente bleiben unverändert. Die Entwicklungsmodusgrenze der Sandbox wird durch getrennte Debug-/Releaseprüfungen erhalten. Diese Aussage ist ausschließlich eine Dokumentprüfung: keine Hardwaremessung, kein Godot-Test, kein Export, kein J1 und kein R0/R1 wurden ausgeführt; kein Task wurde automatisch `ACCEPTED`.
 
-## 9. Erster an Claude Code zu vergebender Auftrag
+## 10. Erster an Claude Code zu vergebender Auftrag (historisch, P0-01)
 
 | Feld | Festlegung |
 | --- | --- |
@@ -622,5 +920,17 @@ Diese Verweise sind keine zusätzlichen Mikroaufgaben und keine bereits bestande
 | Ergebnisgrenze | Nach dem Bericht auswerten. Falls Templates fehlen, nur deren genau begrenzte Installation/Nachprüfung als Fortsetzung ausdrücklich beauftragen. E02a-Auswahl dokumentieren, bevor P0-02 beginnt. |
 | Dateigrenze / Git | Bericht und gegebenenfalls ausdrücklich beauftragte D1-Befundpflege; keine Implementierungsdateien, Downloads, Installationen oder Commits im ersten Prüfauftrag. |
 | Nächster Schritt | Project Lead erstellt ausschließlich aus P0-01 den konkreten Claude-Code-Prompt. P0-02/03/04 nicht gleichzeitig mitbeauftragen. |
+
+Dies ist die strukturierte Auftragsauswahl, kein Chatprompt und noch keine Ausführungserlaubnis.
+
+## 11. Nächster an Claude Code zu vergebender Auftrag (Stand 21.09.2026)
+
+| Feld | Festlegung |
+| --- | --- |
+| Task | **P2-01 – Interaktionsvertrag, Interactor und Testschalter** gemäß vollständigem strukturiertem Task in §7 |
+| Status / Rolle | GATE_OPEN bis zur vorläufigen Bestätigung des Interaktionsprofils (E04, Bedienung); danach READY; Claude Code / Opus 5.0 |
+| Vorher durch Project Lead/Autoren | Interaktionsprofil (Belegung `interact`, Drücken/Halten, Reichweite, Hinweisform) vorläufig bestätigen; parallel E04-Testregel, E05 und E06 vorbereiten, damit P2-03/04/05 nicht warten |
+| Dateigrenze / Git | Nur die in P2-01 genannten Dateien; G1, kein Commit bis zum P2-Integrationspunkt ohne Freigabe |
+| Nächster Schritt | Project Lead erstellt ausschließlich aus P2-01 den konkreten Claude-Code-Prompt; P2-02…08 nicht gleichzeitig beauftragen. P2-07 darf als unabhängiger Auftrag parallel vergeben werden. |
 
 Dies ist die strukturierte Auftragsauswahl, kein Chatprompt und noch keine Ausführungserlaubnis.
