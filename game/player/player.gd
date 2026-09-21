@@ -6,15 +6,17 @@ extends CharacterBody3D
 ## dreht horizontal (Yaw), Head vertikal (Pitch), die Kamera bleibt Kind von
 ## Head. Alle Zahlen kommen aus PlayerTuning; keine Tastencodes, nur Actions.
 ##
-## Ausbaustufe P1-03: WASD, Mausblick, Gravity, Sprung, Bodenkollision,
-## Sprint (Halten), Ducken (Halten) mit sicherem Aufstehen und markerbasiertes
-## Traversal. Haltung (STANDING/CROUCHED) ist eine eigene Achse neben der
-## Fortbewegung (am Boden / in der Luft über is_on_floor() / TRAVERSING über
-## _traversal_active); keine Zustandsmaschine. Traversal: ein TraversalMarker
+## Ausbaustufe P1-04: WASD, Mausblick, Gravity, Sprung, Bodenkollision,
+## Sprint (Halten), Ducken (Halten) mit sicherem Aufstehen, markerbasiertes
+## Traversal sowie Testschritte/Landungsimpuls aus zurückgelegter Bodenstrecke
+## über eine lokale Audioquelle (E12a-Testton, temporär). Haltung
+## (STANDING/CROUCHED) ist eine eigene Achse neben der Fortbewegung (am
+## Boden / in der Luft über is_on_floor() / TRAVERSING über _traversal_active);
+## keine Zustandsmaschine. Traversal: ein TraversalMarker
 ## bietet eine erlaubte Passage an, der Player prüft Reichweite, Höhe,
 ## Richtung und Körperfreiheit entlang des Weges und fährt ihn kollisions-
 ## geprüft über move_and_collide() – kein Tween, kein Teleport.
-## Interaktion, Licht, Health und Audio folgen mit ihren Tasks.
+## Interaktion, Licht, Health und echtes Sounddesign folgen mit ihren Tasks.
 ## Gameplayfreigabe kommt ausschließlich vom Level über set_gameplay_active().
 
 enum Posture { STANDING, CROUCHED }
@@ -37,6 +39,7 @@ const LOOK_SUPPRESS_FRAMES: int = 2
 @onready var _body_shape: CollisionShape3D = $BodyShape
 @onready var _head: Node3D = $Head
 @onready var _camera: Camera3D = $Head/Camera3D
+@onready var _footsteps: AudioStreamPlayer3D = $Footsteps
 
 var _gameplay_active: bool = false
 ## Vertikaler Blickwinkel in Radiant; Laufzustand, nicht Konfiguration.
@@ -54,6 +57,20 @@ var _offered_marker: Area3D = null
 var _traversal_active: bool = false
 var _traversal_path: PackedVector3Array = PackedVector3Array()
 var _traversal_index: int = 0
+## Schritt-/Landungsdiagnose (P1-04): Schritte entstehen aus tatsächlich
+## zurückgelegter Bodenstrecke, nicht aus gedrückten Tasten. Die Audioausgabe
+## besitzt keinen Bewegungszustand; sie wird nur ausgelöst.
+var _step_accumulator: float = 0.0
+var _last_ground_position: Vector3 = Vector3.ZERO
+var _was_on_floor: bool = false
+var _peak_fall_speed: float = 0.0
+var _footstep_count: int = 0
+var _landing_count: int = 0
+var _last_footstep_context: String = ""
+var _last_footstep_db: float = 0.0
+var _last_footstep_pitch: float = 1.0
+## Aufprallgeschwindigkeit der letzten Landung (auch unterhalb der Schwelle).
+var _last_impact_speed: float = 0.0
 
 
 func _ready() -> void:
@@ -80,6 +97,9 @@ func set_gameplay_active(active: bool) -> void:
 	_gameplay_active = active
 	if active:
 		_look_suppress_frames = LOOK_SUPPRESS_FRAMES
+		# Nach Freigabe (Start, Fortsetzen) beginnt die Schrittstrecke neu:
+		# kein nachgeholter Schritt oder Landungsimpuls aus der Zeit davor.
+		_reset_footstep_tracking()
 
 
 func is_gameplay_active() -> bool:
@@ -98,6 +118,7 @@ func reset_motion_state() -> void:
 	_head.position.y = _eye_height_current
 	_clear_traversal()
 	_offered_marker = null
+	_reset_footstep_tracking()
 
 
 func get_camera() -> Camera3D:
@@ -157,6 +178,7 @@ func _physics_process(delta: float) -> void:
 		# Haltungswechsel, keine Schwerkraft; Mausblick bleibt möglich.
 		_advance_traversal(delta)
 		_update_eye_height(delta)
+		_reset_footstep_tracking()
 		return
 
 	_update_posture()
@@ -196,7 +218,9 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.y -= tuning.gravity * delta
 
+	var fall_speed_before_move: float = maxf(-velocity.y, 0.0)
 	move_and_slide()
+	_update_movement_audio(fall_speed_before_move)
 
 
 ## --- Traversal (Architektur §7 „Traversal im selben Motor“) -------------------
@@ -243,11 +267,15 @@ func get_traversal_rejection(marker: Area3D, wish_dir: Vector3) -> String:
 	facing.y = 0.0
 	if facing.normalized().dot(direction) < min_dot:
 		return "Blick nicht auf die Passage"
+	# Reichweite „vor dem Spieler“: Abstand entlang der Passagerichtung bis
+	# zur Eintrittslinie; der seitliche Spielraum ist durch die Erkennungszone
+	# des Markers begrenzt (ein Angebot liegt nur innerhalb der Zone vor).
 	var to_entry: Vector3 = marker.get_entry_position() - global_position
 	to_entry.y = 0.0
-	if to_entry.length() > tuning.traversal_detect_range:
+	var forward_distance: float = to_entry.dot(direction)
+	if forward_distance > tuning.traversal_detect_range:
 		return "zu weit entfernt"
-	if to_entry.dot(direction) < -tuning.body_radius:
+	if forward_distance < -tuning.body_radius:
 		return "Eintritt liegt hinter dem Spieler"
 	var height: float = marker.get_exit_position().y - global_position.y
 	if height <= tuning.traversal_lift_margin:
@@ -322,6 +350,139 @@ func _clear_traversal() -> void:
 	_traversal_path = PackedVector3Array()
 	_traversal_index = 0
 	velocity = Vector3.ZERO
+
+
+## --- Schritte und Landung (P1-04, E03-Nachtrag Schritte, E12a) --------------
+
+## Nach move_and_slide(): Schritte aus tatsächlich zurückgelegter horizontaler
+## Bodenstrecke, Landungsimpuls aus der Fallgeschwindigkeit vor dem Aufsetzen.
+## Stand, Wandkontakt ohne Strecke, Luft, Traversal und Pause erzeugen nichts;
+## nach Fortsetzen wird nichts nachgeholt, weil die Strecke nur pro Tick zählt.
+func _update_movement_audio(fall_speed_before_move: float) -> void:
+	var on_floor: bool = is_on_floor()
+	if on_floor:
+		if _was_on_floor:
+			var moved: Vector3 = global_position - _last_ground_position
+			moved.y = 0.0
+			var distance: float = moved.length()
+			# Unplausible Strecke pro Tick = Versetzen (Spawn, Test, späteres
+			# Restore): keine Schritte daraus ableiten, Verfolgung neu ansetzen.
+			if distance > tuning.sprint_speed * get_physics_process_delta_time() * 4.0:
+				_reset_footstep_tracking()
+				return
+			_step_accumulator += distance
+			var threshold: float = get_footstep_threshold()
+			if _step_accumulator >= threshold:
+				# Höchstens ein Schritt pro Tick; Rest bleibt unter der Schwelle.
+				_step_accumulator = minf(_step_accumulator - threshold, threshold * 0.5)
+				_play_footstep()
+		else:
+			var impact: float = maxf(_peak_fall_speed, fall_speed_before_move)
+			_last_impact_speed = impact
+			if impact >= tuning.landing_min_fall_speed:
+				_play_landing()
+			_step_accumulator = 0.0
+		_peak_fall_speed = 0.0
+	else:
+		_peak_fall_speed = maxf(_peak_fall_speed, fall_speed_before_move)
+		_step_accumulator = 0.0
+	_was_on_floor = on_floor
+	_last_ground_position = global_position
+
+
+## Schrittstrecke für den aktuellen Kontext (Ducken vor Sprint vor Gehen).
+func get_footstep_threshold() -> float:
+	match get_footstep_context():
+		"crouch":
+			return tuning.footstep_distance_crouch
+		"sprint":
+			return tuning.footstep_distance_sprint
+		_:
+			return tuning.footstep_distance_walk
+
+
+func get_footstep_context() -> String:
+	if _posture == Posture.CROUCHED:
+		return "crouch"
+	if is_sprinting():
+		return "sprint"
+	return "walk"
+
+
+func _play_footstep() -> void:
+	var context: String = get_footstep_context()
+	var offset_db: float = 0.0
+	match context:
+		"sprint":
+			offset_db = tuning.footstep_sprint_db
+		"crouch":
+			offset_db = tuning.footstep_crouch_db
+	var variation: float = tuning.footstep_pitch_variation
+	_trigger_impulse(context, offset_db, 1.0 + randf_range(-variation, variation))
+	_footstep_count += 1
+
+
+func _play_landing() -> void:
+	_trigger_impulse("landing", tuning.landing_db, tuning.landing_pitch_scale)
+	_landing_count += 1
+
+
+## Einzige Stelle, die die lokale Audioquelle anstößt; sie liest nur Werte.
+func _trigger_impulse(context: String, volume_db: float, pitch_scale: float) -> void:
+	_last_footstep_context = context
+	_last_footstep_db = volume_db
+	_last_footstep_pitch = pitch_scale
+	_footsteps.volume_db = volume_db
+	_footsteps.pitch_scale = pitch_scale
+	_footsteps.play()
+
+
+## Strecken-/Fallverfolgung neu ansetzen (Spawn, Traversal): kein alter Rest
+## löst danach einen Schritt oder eine Landung aus.
+func _reset_footstep_tracking() -> void:
+	_step_accumulator = 0.0
+	_peak_fall_speed = 0.0
+	_was_on_floor = is_on_floor()
+	_last_ground_position = global_position
+
+
+## Diagnosewerte (nur lesend, für Debug-Overlay und Tests).
+func get_locomotion_name() -> String:
+	if _traversal_active:
+		return "TRAVERSING"
+	return "GROUNDED" if is_on_floor() else "AIRBORNE"
+
+
+func get_horizontal_speed() -> float:
+	return Vector2(velocity.x, velocity.z).length()
+
+
+func get_step_accumulator() -> float:
+	return _step_accumulator
+
+
+func get_footstep_count() -> int:
+	return _footstep_count
+
+
+func get_landing_count() -> int:
+	return _landing_count
+
+
+func get_last_footstep_context() -> String:
+	return _last_footstep_context
+
+
+func get_last_footstep_db() -> float:
+	return _last_footstep_db
+
+
+func get_last_footstep_pitch() -> float:
+	return _last_footstep_pitch
+
+
+func get_last_impact_speed() -> float:
+	return _last_impact_speed
 
 
 ## Zieltempo aus Haltung und Sprintabsicht: geduckt gilt das Ducktempo,

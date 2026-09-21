@@ -56,6 +56,24 @@ extends Resource
 ## waagerecht zum Ziel fährt; die Schwerkraft setzt ihn danach ab (vorläufig).
 @export_range(0.0, 0.3, 0.01, "suffix:m") var traversal_lift_margin: float = 0.05
 
+@export_group("Schritte und Landung")
+## Zurückgelegte horizontale Bodenstrecke pro Schritt je Kontext (E03-Nachtrag Schritte).
+@export_range(0.05, 3.0, 0.01, "suffix:m") var footstep_distance_walk: float = 0.7
+@export_range(0.05, 3.0, 0.01, "suffix:m") var footstep_distance_sprint: float = 0.9
+@export_range(0.05, 3.0, 0.01, "suffix:m") var footstep_distance_crouch: float = 0.5
+## Lautstärkeversatz gegenüber der Gehreferenz.
+@export_range(-24.0, 24.0, 0.5, "suffix:dB") var footstep_sprint_db: float = 2.0
+@export_range(-24.0, 24.0, 0.5, "suffix:dB") var footstep_crouch_db: float = -4.0
+## Zufällige Tonhöhenvariation pro Schritt (Anteil, 0,03 = ±3 %).
+@export_range(0.0, 0.5, 0.005) var footstep_pitch_variation: float = 0.03
+## Fallgeschwindigkeit, ab der eine Landung einen Testimpuls auslöst
+## (vorläufig gewählt: ≈ 0,32 m Fallhöhe; kleine Bodenunebenheiten liegen darunter,
+## der Abstieg von der 0,5-m-Testplattform darüber).
+@export_range(0.1, 30.0, 0.1, "suffix:m/s") var landing_min_fall_speed: float = 2.5
+## Landungsimpuls: Lautstärkeversatz und Tonhöhe relativ zum Schritt (vorläufig).
+@export_range(-24.0, 24.0, 0.5, "suffix:dB") var landing_db: float = 3.0
+@export_range(0.1, 2.0, 0.05) var landing_pitch_scale: float = 0.6
+
 @export_group("Kamera")
 @export_range(1.0, 179.0, 0.5, "suffix:°") var fov: float = 75.0
 ## Blickdrehung pro Mauspixel; bewusst nicht mit der Bildrate skaliert.
@@ -91,6 +109,12 @@ func validate(context: String) -> bool:
 		problems.append("traversal_max_height, traversal_detect_range und traversal_speed müssen positiv sein")
 	if traversal_max_angle <= 0.0 or traversal_max_angle > 90.0 or traversal_lift_margin < 0.0:
 		problems.append("traversal_max_angle muss in (0, 90] liegen und traversal_lift_margin nicht negativ sein")
+	if footstep_distance_walk <= 0.0 or footstep_distance_sprint <= 0.0 or footstep_distance_crouch <= 0.0:
+		problems.append("footstep_distance_* müssen positiv sein")
+	if footstep_pitch_variation < 0.0 or footstep_pitch_variation >= 1.0:
+		problems.append("footstep_pitch_variation muss in [0, 1) liegen")
+	if landing_min_fall_speed <= 0.0 or landing_pitch_scale <= 0.0:
+		problems.append("landing_min_fall_speed und landing_pitch_scale müssen positiv sein")
 	if air_control < 0.0 or air_control > 1.0:
 		problems.append("air_control muss zwischen 0 und 1 liegen")
 	if gravity <= 0.0 or jump_height < 0.0:

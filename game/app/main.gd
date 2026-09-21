@@ -29,6 +29,10 @@ const UI_ACTION_PREFIX: String = "ui_"
 ## Obergrenze an Frames, die auf die Freigabe einer alten Welt gewartet wird.
 const MAX_TEARDOWN_FRAMES: int = 10
 
+## Kleine lesende Entwicklungsansicht (Architektur §28); nur im Debug-Build
+## instanziiert, im Release weder vorhanden noch aktivierbar.
+const DEBUG_OVERLAY_SCENE_PATH: String = "res://debug/debug_overlay.tscn"
+
 @onready var _world_host: Node3D = $WorldHost
 @onready var _game_ui: CanvasLayer = $GameUI
 
@@ -38,6 +42,7 @@ var _run_generation: int = 0
 var _world: Node3D = null
 ## Fokusverlust während PREPARING muss bis zur Aktivierung erhalten bleiben.
 var _pause_on_activation: bool = false
+var _debug_overlay: CanvasLayer = null
 
 
 func _ready() -> void:
@@ -48,6 +53,10 @@ func _ready() -> void:
 	# E03a: Fokusverlust pausiert aktives Gameplay. Fokusrückkehr wird bewusst
 	# nicht verbunden; Fortsetzen erfolgt nur durch eine Nutzeraktion.
 	get_window().focus_exited.connect(_on_window_focus_exited)
+	if is_debug_overlay_allowed():
+		_debug_overlay = load(DEBUG_OVERLAY_SCENE_PATH).instantiate()
+		add_child(_debug_overlay)
+		_debug_overlay.bind_main(self)
 	_enter_menu()
 
 
@@ -71,6 +80,15 @@ func _unhandled_input(event: InputEvent) -> void:
 ## Debug-/Release-Grenze wird in P0-04 mit dem Export festgelegt.
 func is_sandbox_allowed() -> bool:
 	return OS.is_debug_build()
+
+
+## Dieselbe Entwicklungsgrenze wie der Sandboxzugang.
+func is_debug_overlay_allowed() -> bool:
+	return OS.is_debug_build()
+
+
+func get_debug_overlay() -> CanvasLayer:
+	return _debug_overlay
 
 
 func get_phase() -> Phase:

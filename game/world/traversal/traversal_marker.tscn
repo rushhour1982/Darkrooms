@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://ceg00w85jcnrg" path="res://world/traversal/traversal_marker.gd" id="1_marker"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_zone"]
-size = Vector3(2, 1.6, 1.6)
+size = Vector3(2.7, 1.6, 1.6)
 
 [node name="TraversalMarker" type="Area3D"]
 collision_layer = 0
