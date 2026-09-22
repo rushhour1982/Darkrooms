@@ -1,8 +1,9 @@
-[gd_scene load_steps=26 format=3 uid="uid://bjuyxuhvedmyx"]
+[gd_scene load_steps=31 format=3 uid="uid://bjuyxuhvedmyx"]
 
 [ext_resource type="Script" uid="uid://6j8k7raysejf" path="res://levels/vertical_slice/vertical_slice.gd" id="1_level"]
 [ext_resource type="PackedScene" uid="uid://chhikhl6gap1w" path="res://player/player.tscn" id="2_player"]
 [ext_resource type="PackedScene" uid="uid://c73knaofkyasr" path="res://world/traversal/traversal_marker.tscn" id="3_marker"]
+[ext_resource type="PackedScene" uid="uid://b5vqa54n1gvgy" path="res://world/switch/switch.tscn" id="4_switch"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_floor"]
 size = Vector3(20, 0.2, 20)
@@ -57,6 +58,18 @@ size = Vector3(2, 0.3, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_roof"]
 size = Vector3(2, 0.3, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_blocker"]
+size = Vector3(1.6, 2, 0.2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_blocker"]
+size = Vector3(1.6, 2, 0.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_post"]
+size = Vector3(0.2, 1.8, 0.2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_post"]
+size = Vector3(0.2, 1.8, 0.2)
 
 [sub_resource type="BoxMesh" id="BoxMesh_marker"]
 size = Vector3(0.6, 0.6, 0.6)
@@ -223,6 +236,38 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 0.5)
 
 [node name="Exit" parent="World/BlockedMarker"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, -0.5)
+
+[node name="Interaction" type="Node3D" parent="World"]
+
+[node name="Post" type="StaticBody3D" parent="World/Interaction"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 0.9, -8.35)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="World/Interaction/Post"]
+mesh = SubResource("BoxMesh_post")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="World/Interaction/Post"]
+shape = SubResource("BoxShape3D_post")
+
+[node name="SwitchFront" parent="World/Interaction" instance=ExtResource("4_switch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 1.55, -8.2)
+persistent_id = &"sandbox/switch_front"
+
+[node name="SwitchBack" parent="World/Interaction" instance=ExtResource("4_switch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 1.55, -9.925)
+persistent_id = &"sandbox/switch_back"
+
+[node name="SwitchCovered" parent="World/Interaction" instance=ExtResource("4_switch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1.55, -9.925)
+persistent_id = &"sandbox/switch_covered"
+
+[node name="Blocker" type="StaticBody3D" parent="World/Interaction"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1, -8.6)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="World/Interaction/Blocker"]
+mesh = SubResource("BoxMesh_blocker")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="World/Interaction/Blocker"]
+shape = SubResource("BoxShape3D_blocker")
 
 [node name="Marker" type="MeshInstance3D" parent="World"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, -8)

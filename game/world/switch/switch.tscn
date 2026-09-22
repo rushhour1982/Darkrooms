@@ -1,0 +1,41 @@
+[gd_scene load_steps=7 format=3 uid="uid://b5vqa54n1gvgy"]
+
+[ext_resource type="Script" uid="uid://ckx10s31id2v1" path="res://world/switch/switch.gd" id="1_switch"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_off"]
+albedo_color = Color(0.45, 0.45, 0.48, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_on"]
+albedo_color = Color(0.25, 0.8, 0.35, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hit"]
+size = Vector3(0.3, 0.3, 0.15)
+
+[sub_resource type="BoxMesh" id="BoxMesh_base"]
+size = Vector3(0.3, 0.3, 0.15)
+
+[sub_resource type="BoxMesh" id="BoxMesh_lever"]
+size = Vector3(0.05, 0.2, 0.05)
+
+[node name="Switch" type="Node3D"]
+script = ExtResource("1_switch")
+material_off = SubResource("StandardMaterial3D_off")
+material_on = SubResource("StandardMaterial3D_on")
+
+[node name="HitArea" type="Area3D" parent="."]
+collision_layer = 8
+collision_mask = 0
+monitoring = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HitArea"]
+shape = SubResource("BoxShape3D_hit")
+
+[node name="Visuals" type="Node3D" parent="."]
+
+[node name="Base" type="MeshInstance3D" parent="Visuals"]
+mesh = SubResource("BoxMesh_base")
+material_override = SubResource("StandardMaterial3D_off")
+
+[node name="Lever" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.12)
+mesh = SubResource("BoxMesh_lever")

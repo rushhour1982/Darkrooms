@@ -7,6 +7,7 @@ size = Vector3(2.7, 1.6, 1.6)
 
 [node name="TraversalMarker" type="Area3D"]
 collision_layer = 0
+collision_mask = 2
 script = ExtResource("1_marker")
 
 [node name="DetectionZone" type="CollisionShape3D" parent="."]

@@ -16,7 +16,10 @@ extends CharacterBody3D
 ## bietet eine erlaubte Passage an, der Player prüft Reichweite, Höhe,
 ## Richtung und Körperfreiheit entlang des Weges und fährt ihn kollisions-
 ## geprüft über move_and_collide() – kein Tween, kein Teleport.
-## Interaktion, Licht, Health und echtes Sounddesign folgen mit ihren Tasks.
+## P2-01: Der Interactor (Kind „Interactor“, player_interactor.gd) erkennt
+## Interaktionsziele aus der Kamera und fordert Interaktionen an; der Player
+## reicht ihm nur die Gameplayfreigabe weiter.
+## Licht, Health und echtes Sounddesign folgen mit ihren Tasks.
 ## Gameplayfreigabe kommt ausschließlich vom Level über set_gameplay_active().
 
 enum Posture { STANDING, CROUCHED }
@@ -40,6 +43,7 @@ const LOOK_SUPPRESS_FRAMES: int = 2
 @onready var _head: Node3D = $Head
 @onready var _camera: Camera3D = $Head/Camera3D
 @onready var _footsteps: AudioStreamPlayer3D = $Footsteps
+@onready var _interactor: PlayerInteractor = $Interactor
 
 var _gameplay_active: bool = false
 ## Vertikaler Blickwinkel in Radiant; Laufzustand, nicht Konfiguration.
@@ -106,6 +110,7 @@ func set_gameplay_active(active: bool) -> void:
 		# Nach Freigabe (Start, Fortsetzen) beginnt die Schrittstrecke neu:
 		# kein nachgeholter Schritt oder Landungsimpuls aus der Zeit davor.
 		_reset_footstep_tracking()
+	_interactor.set_gameplay_active(active)
 
 
 func is_gameplay_active() -> bool:
@@ -125,10 +130,15 @@ func reset_motion_state() -> void:
 	_clear_traversal()
 	_offered_marker = null
 	_reset_footstep_tracking()
+	_interactor.clear_target()
 
 
 func get_camera() -> Camera3D:
 	return _camera
+
+
+func get_interactor() -> PlayerInteractor:
+	return _interactor
 
 
 func get_pitch_degrees() -> float:

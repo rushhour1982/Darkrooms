@@ -9,7 +9,9 @@ extends CanvasLayer
 ## unbind_world() wieder losgelassen.
 ##
 ## Ausbaustufe P0-03: Hauptmenü, Weltansicht (HUD), Pausepanel und
-## Lade-/Fehlermeldung. Weitere Paneele entstehen erst mit ihrem Task.
+## Lade-/Fehlermeldung. P2-01: Interaktionshinweis im HUD, gespeist aus dem
+## Zielsignal des Player-Interactors; die UI entscheidet nichts darüber.
+## Weitere Paneele entstehen erst mit ihrem Task.
 
 ## Bedienwunsch: Systems Sandbox starten (nur Entwicklungsfunktion).
 signal sandbox_requested
@@ -22,6 +24,8 @@ signal quit_requested
 
 ## Action, deren Belegung im HUD als Pausenhinweis angezeigt wird.
 const PAUSE_ACTION: StringName = &"pause"
+## Action, deren Belegung dem Interaktionshinweis vorangestellt wird (E04).
+const INTERACT_ACTION: StringName = &"interact"
 
 @onready var _main_menu: Control = $Root/MainMenu
 @onready var _sandbox_button: Button = $Root/MainMenu/Layout/SandboxButton
@@ -29,6 +33,7 @@ const PAUSE_ACTION: StringName = &"pause"
 @onready var _hud: Control = $Root/HUD
 @onready var _world_title: Label = $Root/HUD/Layout/WorldTitle
 @onready var _pause_hint: Label = $Root/HUD/Layout/PauseHint
+@onready var _interaction_hint: Label = $Root/HUD/Layout/InteractionHint
 @onready var _pause_panel: Control = $Root/PausePanel
 @onready var _resume_button: Button = $Root/PausePanel/Layout/ResumeButton
 @onready var _pause_menu_button: Button = $Root/PausePanel/Layout/MenuButton
@@ -38,6 +43,8 @@ const PAUSE_ACTION: StringName = &"pause"
 
 ## Nur lesende Referenz auf die aktuell gebundene Welt; null außerhalb PLAYING/PAUSED.
 var _world: Node = null
+## Zielsignalquelle der gebundenen Welt (Player-Interactor); nur verbunden, nie gelesen.
+var _interactor: Node = null
 
 
 func _ready() -> void:
@@ -100,19 +107,34 @@ func show_pause() -> void:
 func bind_world(world: Node) -> void:
 	_world = world
 	_world_title.text = world.get_display_name() if world.has_method("get_display_name") else world.name
+	_show_interaction_hint("")
+	var player: Node = world.get_player() if world.has_method("get_player") else null
+	if player != null and player.has_method("get_interactor"):
+		_interactor = player.get_interactor()
+		_interactor.target_changed.connect(_show_interaction_hint)
 
 
 ## Von Main vor jedem Weltabbau aufgerufen: Referenz und weltbezogene Anzeige
 ## lösen, damit keine alten Weltzugriffe zurückbleiben.
 func unbind_world() -> void:
+	if is_instance_valid(_interactor):
+		_interactor.target_changed.disconnect(_show_interaction_hint)
+	_interactor = null
 	_world = null
 	_world_title.text = ""
+	_show_interaction_hint("")
 	_hud.visible = false
 	_pause_panel.visible = false
 
 
 func has_world_bound() -> bool:
 	return _world != null
+
+
+## Hinweis nur bei gültigem Ziel (E04): „<Taste> – <Handlung>“, sonst nichts.
+func _show_interaction_hint(action_text: String) -> void:
+	_interaction_hint.visible = not action_text.is_empty()
+	_interaction_hint.text = "" if action_text.is_empty() else "%s – %s" % [_action_key_label(INTERACT_ACTION), action_text]
 
 
 func _hide_all_panels() -> void:

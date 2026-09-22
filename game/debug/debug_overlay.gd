@@ -5,7 +5,8 @@ extends CanvasLayer
 ## an; sie ist keine zweite Zustandswahrheit und greift nirgends ein. Main
 ## instanziiert sie nur im Entwicklungsmodus (Debug-Build); im Release
 ## existiert sie nicht. Ausbaustufe P1-04: Phase, Freigabe, Fortbewegung,
-## Haltung, Geschwindigkeit, Schrittstrecke, letzter Impuls, Landungen.
+## Haltung, Geschwindigkeit, Schrittstrecke, letzter Impuls, Landungen;
+## P2-01: Interaktionsziel/-text bzw. interner Ablehnungsgrund, nur lesend.
 
 ## Entwicklungs-Hotkey zum Ein-/Ausblenden (F3). Bewusst außerhalb der
 ## Gameplay-Input-Map, da project.godot in P1-04 nicht dafür freigegeben ist;
@@ -69,4 +70,11 @@ func build_text() -> String:
 			lines.append("Traversal-Angebot %s: %s" % [marker.name, reason if reason != "" else "startbereit (vorwärts laufen)"])
 		else:
 			lines.append("Traversal-Angebot -")
+	if player.has_method("get_interactor"):
+		var interactor: Node = player.get_interactor()
+		var target: Node = interactor.get_target()
+		if target != null:
+			lines.append("Interaktion Ziel %s (%s)  Anfragen %d" % [target.name, interactor.get_action_text(), interactor.get_interaction_count()])
+		else:
+			lines.append("Interaktion -  (%s)  Anfragen %d" % [interactor.get_last_rejection(), interactor.get_interaction_count()])
 	return "\n".join(lines)

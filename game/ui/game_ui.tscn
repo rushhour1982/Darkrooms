@@ -69,6 +69,10 @@ layout_mode = 2
 [node name="PauseHint" type="Label" parent="Root/HUD/Layout"]
 layout_mode = 2
 
+[node name="InteractionHint" type="Label" parent="Root/HUD/Layout"]
+visible = false
+layout_mode = 2
+
 [node name="PausePanel" type="CenterContainer" parent="Root"]
 visible = false
 layout_mode = 1
