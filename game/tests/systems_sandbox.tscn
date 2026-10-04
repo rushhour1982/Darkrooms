@@ -106,6 +106,7 @@ ambient_light_energy = 0.5
 [node name="SystemsSandbox" type="Node3D" node_paths=PackedStringArray("world_camera", "player")]
 script = ExtResource("1_level")
 display_name = "Systems Sandbox"
+level_id = &"sandbox"
 world_camera = NodePath("Actors/Player/Head/Camera3D")
 player = NodePath("Actors/Player")
 
@@ -290,3 +291,13 @@ environment = SubResource("Environment_neutral")
 
 [node name="Player" parent="Actors" instance=ExtResource("2_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
+
+[node name="Anchors" type="Node3D" parent="."]
+
+[node name="Start" type="Marker3D" parent="Anchors"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
+metadata/persistent_id = &"sandbox/anchor_start"
+
+[node name="InteractionTest" type="Marker3D" parent="Anchors"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 0, -6.5)
+metadata/persistent_id = &"sandbox/anchor_interaction_test"
