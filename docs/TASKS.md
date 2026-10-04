@@ -676,7 +676,7 @@ Diese Verweise sind keine zusätzlichen Mikroaufgaben und keine bereits bestande
 - **Titel:** `level_id`, `persistent_id`-Verzeichnis und Aufbauprüfung im Levelvertrag.
 - **Phase:** P2.
 - **Milestone:** M2.
-- **Status:** IMPLEMENTED – 04.10.2026 (Cloud-Einzelauftrag 01, Claude Code; Nachtrag Switch-Editorwarnung und `.uid` am selben Tag); lokale Windows-Prüfung von `7dae862` bestanden; Reparatur der Traversal-Exit-Overrides (Nachtrag 2) lokal noch zu prüfen (siehe Befund). Zuvor READY – 22.09.2026; P2-01 ACCEPTED (Interactable mit `persistent_id`, Sandbox-Instanzen mit IDs `sandbox/…`), keine offenen Gates.
+- **Status:** RUNTIME_TESTED – 04.10.2026: Stand `3b57355` lokal vom Project Lead auf Windows mit Godot 4.7.2 geprüft (Import, P0, P1, P2-02 headless mit Exit 0; Editorwarnung und Editor-Speichern der Sandbox bestätigt). Fensterlauf der Regressionen und Windows-Export nicht durchgeführt (Export gemäß Task in P2-08). Nicht ACCEPTED; keine P2-Integrationsabnahme. Vorher IMPLEMENTED – 04.10.2026 (Cloud-Einzelauftrag 01, Claude Code; Nachträge Switch-Editorwarnung, `.uid` und Traversal-Exit-Overrides am selben Tag). Zuvor READY – 22.09.2026; P2-01 ACCEPTED (Interactable mit `persistent_id`, Sandbox-Instanzen mit IDs `sandbox/…`), keine offenen Gates.
 - **Verantwortliche Rolle:** Claude Code / Opus 5.0.
 - **Priorität:** Hoch; Voraussetzung für Türen, Pickups und spätere Saves.
 - **Ziel:** Jede relevante Levelinstanz hat eine eindeutige, geprüfte Identität; Fehler stoppen die Gameplayfreigabe mit Diagnose.
@@ -713,7 +713,8 @@ Diese Verweise sind keine zusätzlichen Mikroaufgaben und keine bereits bestande
   - **Korrektur (Nachtrag 2, Freigabe Project Lead):** `systems_sandbox.tscn` führt `World/VaultMarker`, `World/HighMarker` und `World/BlockedMarker` als editierbare Kinder (drei `[editable]`-Einträge am Dateiende). Höhen, Geometrie und Klettermechanik unverändert. `p2_ids_regression.gd` prüft zusätzlich je Marker den lokalen Exit-Override (Vault/Blocked 0,8 m, High 1,3 m, jeweils −0,5 m tief), die Zielhöhe `get_height()` und die Exit-Zielposition `get_exit_position()`; nach einem Editor-Speichern ohne Korrektur schlägt mindestens die HighMarker-Prüfung fehl.
   - **Ausgeführte Prüfungen Nachtrag (Cloud, 04.10.2026):** UID-Eindeutigkeit per Suche in Arbeitsbaum und gesamter Git-Historie; `git diff --check` ohne Befund. Keine Godot-Tests in der Cloud (Engine nicht vorhanden).
   - **Ausgeführte Prüfungen Nachtrag 2 (Cloud, 04.10.2026):** `git diff --check` ohne Befund; Syntaxplausibilität `p2_ids_regression.gd` mit gdtoolkit (kein Godot-Nachweis). Keine Godot-Tests in der Cloud.
-  - **Offene Prüfungen (lokaler Prüfer, Windows, Godot 4.7.2) nach Nachtrag 2:** Import; P0, P1, `p2_ids_regression.gd` headless mit Exitcodes (P2-02 enthält jetzt zusätzlich die Exit-Prüfungen); Sandbox im Editor öffnen und speichern: kein Diff an `systems_sandbox.tscn`, insbesondere `World/HighMarker/Exit` bleibt bei 1,3 m; danach P2-02 erneut grün; Traversal-Kurzprobe (High-Hindernis weiterhin erkletterbar); Fehlermeldung im Menü bei Duplikat. Windows-Export in P2-08.
+  - **Lokaler Testnachweis Stand `3b57355` (Windows, Godot 4.7.2, lokaler Prüfer des Project Lead – nicht von Claude ausgeführt):** Import Exit 0; P0 Exit 0; P1 Exit 0; P2-02 Exit 0. Danach `systems_sandbox.tscn` im Godot-4.7.2-Editor geöffnet und gespeichert, anschließend `p2_ids_regression.gd`: `338 bestanden, 0 fehlgeschlagen`, Exit 0; Kletterzielpositionen bleiben nach dem Speichern erhalten. Aus früheren lokalen Prüfungen (Project Lead) weiterhin bestätigt: Schalter zweimal umschaltbar; Editorwarnung ohne ID erscheint und verschwindet nach ID-Vergabe; Codeprüfung des vorherigen Stands ohne blockierenden Befund.
+  - **Nicht durchgeführt / offen (nicht als bestanden gewertet):** Fensterlauf der Regressionen; manuelle Sichtprüfung der Menü-Fehlermeldung bei Duplikat (automatisiert im P2-02-Test geprüft); praktische Traversal-Probe am High-Hindernis (nur Zielpositionen automatisiert geprüft); Windows-Export (P2-08). Abnahme (ACCEPTED) durch Project Lead und P2-Integrationsabnahme (P2-08/J2) stehen aus.
   - **Bekannte Grenzen:** Keine Save-/Restore-Auflösung, keine Referenz-/Puzzleprüfung (spätere Tasks); Anker werden registriert, aber noch von keinem System verwendet (Player-Spawn unverändert über seine Szenenposition).
 
 ### P2-03 – Türen mit kontrolliertem Blatt
@@ -895,7 +896,7 @@ Diese Verweise sind keine zusätzlichen Mikroaufgaben und keine bereits bestande
 | Reihenfolge | Task | Vorher zu bestätigen | Erstes sichtbares Ergebnis |
 | --- | --- | --- | --- |
 | 12 | P2-01 Interaktionsvertrag/Interactor/Schalter | Interaktionsprofil (E04, Bedienung) – bestätigt 21.09.2026 | Hinweis und Schalter reagieren – **ACCEPTED 22.09.2026** |
-| 13 | P2-02 IDs/Levelvalidierung | – (READY 22.09.2026) | Fehlerhafte IDs stoppen den Start – **IMPLEMENTED 04.10.2026; `7dae862` lokal geprüft (Windows), Reparatur Traversal-Exit-Overrides lokal ausstehend** |
+| 13 | P2-02 IDs/Levelvalidierung | – (READY 22.09.2026) | Fehlerhafte IDs stoppen den Start – **RUNTIME_TESTED 04.10.2026 (`3b57355` lokal headless + Editor, Windows); Abnahme ausstehend** |
 | 14 | P2-03 Türen | E04-Testregel | Tür öffnet/schließt, quetscht nicht |
 | 15 | P2-04 Pickups/Inventory-Kern | E05 | Fund verschwindet in den Besitz |
 | 16 | P2-05 Testhinweis/Leseansicht | E06 | Zettel lesen und schließen |
