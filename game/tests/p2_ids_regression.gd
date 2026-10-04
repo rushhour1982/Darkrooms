@@ -31,6 +31,14 @@ const EXPECTED_SANDBOX_IDS: Array[StringName] = [
 ]
 
 
+## Lokale Exit-Positionen der Traversalmarker in der Sandbox (unverändert aus P1-03).
+const TRAVERSAL_EXITS: Dictionary = {
+	"VaultMarker": Vector3(0, 0.8, -0.5),
+	"HighMarker": Vector3(0, 1.3, -0.5),
+	"BlockedMarker": Vector3(0, 0.8, -0.5),
+}
+
+
 ## Erfasst Fehler (keine Warnungen) aller Quellen; threadsicher.
 class ErrorCapture extends Logger:
 	var _mutex: Mutex = Mutex.new()
@@ -178,8 +186,23 @@ func _test_valid_sandbox() -> void:
 	_check(world.get_object_by_id(&"sandbox/unknown") == null, "Lookup: unbekannte ID liefert null")
 	_check(world.get_object_by_id(&"") == null, "Lookup: leere ID liefert null")
 	_check(not world.is_gameplay_active(), "Sandbox: Gameplay nach Aufbau weiter gesperrt")
+	_check_traversal_exits(world)
 	await _dispose(world)
 	_check_no_errors("Gültige Sandbox")
+
+
+## Exit-Overrides der instanziierten Traversalmarker (P1-03-Werte). Sie liegen
+## als editierbare Kinder in der Sandbox; ohne [editable] verwirft der Editor
+## sie beim Speichern und HighMarker fiele auf die Prefab-Höhe 0,8 m zurück.
+func _check_traversal_exits(world: Node3D) -> void:
+	for marker_name in TRAVERSAL_EXITS:
+		var marker: Node = world.get_node("World/" + marker_name)
+		var expected: Vector3 = TRAVERSAL_EXITS[marker_name]
+		var exit: Node3D = marker.get_node("Exit")
+		_check(exit.position.is_equal_approx(expected), "Traversal %s: Exit-Override %s" % [marker_name, expected])
+		_check(is_equal_approx(marker.get_height(), expected.y), "Traversal %s: Zielhöhe %.1f m" % [marker_name, expected.y])
+		_check(marker.get_exit_position().is_equal_approx(marker.global_position + expected),
+			"Traversal %s: Exit-Zielposition" % marker_name)
 
 
 ## Baut eine veränderte Sandbox auf und prüft Ablehnung, leeres Verzeichnis,

@@ -301,3 +301,9 @@ metadata/persistent_id = &"sandbox/anchor_start"
 [node name="InteractionTest" type="Marker3D" parent="Anchors"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 0, -6.5)
 metadata/persistent_id = &"sandbox/anchor_interaction_test"
+
+[editable path="World/VaultMarker"]
+
+[editable path="World/HighMarker"]
+
+[editable path="World/BlockedMarker"]
