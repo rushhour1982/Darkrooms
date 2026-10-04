@@ -1,3 +1,4 @@
+@tool
 extends Interactable
 ## Switch – neutraler Testschalter mit eigenständiger Stellung (Architektur §9, §13).
 ##
@@ -5,6 +6,12 @@ extends Interactable
 ## Die Stellung liegt lokal in dieser Instanz (kein Puzzle, keine Bindung);
 ## Darstellung = Hebelneigung und Materialwechsel der Basis. Die Materialien
 ## sind gemeinsame Szenenressourcen und werden nur referenziert, nie verändert.
+##
+## P2-02: @tool nur, damit die geerbte Editorwarnung bei fehlender
+## persistent_id an Schalterinstanzen erscheint (Godot vererbt @tool nicht).
+## Im Editor läuft keine Schalterlogik: _ready() kehrt sofort zurück, damit
+## weder Stellung noch Darstellung (Hebel, Material) in die bearbeitete Szene
+## geschrieben werden; Interaktionen werden nur zur Laufzeit angefordert.
 
 ## Hebelneigung in Grad je Stellung; reine Darstellung, kein Tuning.
 const LEVER_ANGLE_OFF: float = 30.0
@@ -21,6 +28,8 @@ var _toggle_count: int = 0
 
 
 func _ready() -> void:
+	if Engine.is_editor_hint():
+		return
 	_apply_visual_state()
 
 
